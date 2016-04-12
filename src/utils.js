@@ -1,6 +1,10 @@
 import crc from 'easy-crc32'
 
+export function getSanitizedPath(path) {
+    return path
+        .replace(/^\//, '')
+        .replace(/\/$/, '')
+}
 export function getLocCrc(filepath, line) {
-    var sanitazedPath = filepath.replace(/\/(.+)\/$/, '$1')
-    return crc.calculate(sanitazedPath) + crc.calculate(line)
+    return crc.calculate(getSanitizedPath(filepath)) + crc.calculate(line)
 }
