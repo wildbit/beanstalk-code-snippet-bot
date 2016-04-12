@@ -21,7 +21,7 @@
   },
   "scripts": {
     "start": "node index.js",
-    "test": "mocha --compilers js:babel-core/register --require babel-polyfill --recursive ./test/*.js",
+    "test": "mocha --compilers js:babel-core/register --require testSetup.js --recursive ./test/*.js",
     "test:watch": "npm test -- --watch",
     "lint": "eslint .",
     "lint:fix": "npm run lint --fix",
