@@ -1,0 +1,7 @@
+{
+  "extends": "eslint-config-wildbit",
+  "env": {
+    "browser": true,
+    "mocha": true
+  }
+}
