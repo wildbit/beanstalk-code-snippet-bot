@@ -1,0 +1,28 @@
+{
+  "name": "beanstalk-code-snippet-bot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A Slack Bot that displays a code snippet for a specific file URL from Beanstalk",
+  "main": "index.js",
+  "dependencies": {
+    "botkit": "0.0.15"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wildbit/beanstalk-code-snippet-bot.git"
+  },
+  "keywords": [],
+  "authors": [
+    "Andrey Okonetchnikov <andrey@okonet.ru>",
+    "Derek Rushforth"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wildbit/beanstalk-code-snippet-bot/issues"
+  },
+  "homepage": "https://github.com/wildbit/beanstalk-code-snippet-bot#readme"
+}
