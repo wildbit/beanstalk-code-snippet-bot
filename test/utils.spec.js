@@ -23,5 +23,9 @@ describe('utils', () => {
         it('should be defined', () => {
             expect(getLocCrc).toNotBe.undefined
         })
+        it('should return proper hashes', () => {
+            expect(getLocCrc('/config.ru', 4)).toEqual(7082412740)
+            expect(getLocCrc('app/schemas/v1/multi_release_schema.rb', 11)).toEqual(3830012464)
+        })
     })
 })

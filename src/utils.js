@@ -6,5 +6,5 @@ export function getSanitizedPath(path) {
         .replace(/\/$/, '')
 }
 export function getLocCrc(filepath, line) {
-    return crc.calculate(getSanitizedPath(filepath)) + crc.calculate(line)
+    return crc.calculate(getSanitizedPath(filepath)) + crc.calculate(line + '')
 }
