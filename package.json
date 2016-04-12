@@ -22,6 +22,8 @@
     "start": "node index.js",
     "test": "mocha --compiler babel-core/register --recursive ./test/*.js",
     "test:watch": "npm test -- --watch",
+    "lint": "eslint .",
+    "lint:fix": "npm run lint --fix",
     "eslint-staged": "eslint-staged"
   },
   "pre-commit": [
