@@ -18,49 +18,35 @@ bot.startRTM(function (err, bot, payload) {
   }
 })
 
+// TODO: setup process with API token to account. We're going to do this later...
+
 controller.on('bot_channel_join', function (bot, message) {
   bot.reply(message, "I'm here!")
 })
 
-controller.hears(['hello', 'hi'], ['direct_mention'], function (bot, message) {
-  bot.reply(message, 'Hello.')
+controller.hears(['.beanstalkapp.com/'], ['ambient','direct_mention','direct_message','mention'], function(bot, message) {
+
+    console.log('Grabbing snippet from ' + message.text)
+    bot.reply(message, "Hang tight, let me grab you the snippet...")
+
+    // TODO: pass URL off to Andrey and return results
+    var code = '```' +
+               '<a href="#">test</a>' +
+               '<p>test</p>' +
+               '```'
+    bot.reply(message, code)
+
 })
 
-controller.hears(['hello', 'hi'], ['direct_message'], function (bot, message) {
-  bot.reply(message, 'Hello.')
-  bot.reply(message, 'It\'s nice to talk to you directly.')
-})
+controller.hears(['help'],['direct_message', 'direct_mention', 'mention'], function(bot, message) {
+  var help = 'I paste snippet code from Beanstalk links. \n\n' +
+             '_How to get started_\n' +
+             '1. Browse to a specific file in one of your Beanstalk repositories \n' +
+             '2. In Beanstalk, click on the line of code you want to share \n' +
+             '3. Copy the URL from your browser and paste it into slack \n' +
+             ':champagne: :champagne:'
 
-controller.hears('.*', ['mention'], function (bot, message) {
-  bot.reply(message, 'You really do care about me. :heart:')
-})
-
-controller.hears('help', ['direct_message', 'direct_mention'], function (bot, message) {
-  var help = 'I will respond to the following messages: \n' +
-      '`bot hi` for a simple message.\n' +
-      '`bot attachment` to see a Slack attachment message.\n' +
-      '`@<your bot\'s name>` to demonstrate detecting a mention.\n' +
-      '`bot help` to see this again.'
   bot.reply(message, help)
-})
-
-controller.hears(['attachment'], ['direct_message', 'direct_mention'], function (bot, message) {
-  var text = 'Beep Beep Boop is a ridiculously simple hosting platform for your Slackbots.'
-  var attachments = [{
-    fallback: text,
-    pretext: 'We bring bots to life. :sunglasses: :thumbsup:',
-    title: 'Host, deploy and share your bot in seconds.',
-    image_url: 'https://storage.googleapis.com/beepboophq/_assets/bot-1.22f6fb.png',
-    title_link: 'https://beepboophq.com/',
-    text: text,
-    color: '#7CD197'
-  }]
-
-  bot.reply(message, {
-    attachments: attachments
-  }, function (err, resp) {
-    console.log(err, resp)
-  })
 })
 
 controller.hears('.*', ['direct_message', 'direct_mention'], function (bot, message) {
