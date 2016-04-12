@@ -5,12 +5,17 @@
   "description": "A Slack Bot that displays a code snippet for a specific file URL from Beanstalk",
   "main": "index.js",
   "dependencies": {
-    "botkit": "0.0.15"
+    "botkit": "0.0.15",
+    "easy-crc32": "0.0.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "expect": "^1.16.0",
+    "mocha": "^2.4.5"
+  },
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --recursive ./test/*.js",
+    "test:watch": "npm test -- --watch"
   },
   "repository": {
     "type": "git",
