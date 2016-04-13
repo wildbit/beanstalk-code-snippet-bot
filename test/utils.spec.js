@@ -51,7 +51,7 @@ describe('utils', () => {
     })
 
     describe('getContentWithAttachements', () => {
-        it('should include language for code block', () => {
+        it('should return an object with attachement', () => {
             const response = {
                 /* eslint-disable */
                 "data": {
@@ -85,6 +85,7 @@ describe('utils', () => {
             }
             const expected = {
                 /* eslint-disable */
+                "username": "Beanstalk Code Snippet Bot",
                 "attachments": [
                     {
                         "fallback": "index.js",
@@ -105,6 +106,7 @@ line 2
                                 "short": true
                             }
                         ],
+                        "mrkdwn_in": ["text"],
                         "color": "white"
                     }
                 /* eslint-enable */

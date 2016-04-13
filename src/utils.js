@@ -1,6 +1,8 @@
 import crc from 'easy-crc32'
 import axios from 'axios'
 
+const NAME = 'Beanstalk Code Snippet Bot'
+
 export function getSanitizedPath(path) {
     return path
         .replace(/^\//, '')
@@ -29,7 +31,7 @@ export function getFilePath(url) {
 export function getContentWithAttachements(response) {
     const { path, name, contents, revision, repository } = response.data
     return {
-        username: 'My bot',
+        username: NAME,
         attachments: [{
             fallback: path,
             title: name,
