@@ -2,14 +2,16 @@ name: beanstalk-code-snippet-bot
 description: A Slack Bot that displays a code snippet for a specific file URL from Beanstalk
 avatar: resources/avatar.png
 config:
-   - name: BS_USERNAME
-     friendly_name: Beanstalk Username
-     info: Your Beanstalk Username
-     default: beanstalk_username
-   - name: BS_AUTH_TOKEN
-     friendly_name: Beanstalk Auth Token
-     info: Your Beanstalk Authorization Token
-     default: beanstalk_auth_token
+  - name: BS_USERNAME
+    friendly_name: Beanstalk Username
+    info: Your Beanstalk Username
+    default: beanstalk_username
+    type: secret
+  - name: BS_AUTH_TOKEN
+    friendly_name: Beanstalk Auth Token
+    info: Your Beanstalk Authorization Token
+    default: beanstalk_auth_token
+    type: secret
 #background: resources/background.png
 #config:
 #  - name: OPTION
