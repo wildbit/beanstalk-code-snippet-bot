@@ -12,20 +12,21 @@ export function getLocCrc(filepath, line) {
     return crc.calculate(getSanitizedPath(filepath)) + crc.calculate(`${ line }`)
 }
 
-export function getAccountName(url) {
-    return url
-        .replace(/<?https?:\/\//, '')
-        .replace(/\.beanstalkapp\.com(.+)/, '')
-}
-
-export function getRepositoryName(url) {
-    const re = new RegExp(/beanstalkapp\.com\/([\w-_]+)\/browse\/git\/(.+)#L(\d+)/ig)
-    return re.exec(url)[1]
-}
-
-export function getFilePath(url) {
-    const re = new RegExp(/beanstalkapp\.com\/([\w-_]+)\/browse\/git\/(.+)#L(\d+)/ig)
-    return re.exec(url)[2]
+export function parseUrl(url) {
+    const re = new RegExp(/([\w-_]+)\.beanstalkapp\.com\/([\w-_]+)\/browse\/git\/([\w-_/.]+)(\?ref=c-(\w+))?(#L(\d+))?/g) // eslint-disable-line
+    const matches = re.exec(url)
+    if (matches) {
+        const [, accountName, repositoryName, filepath, ...rest] = matches
+        const [, rev, , locHash] = rest
+        return {
+            accountName,
+            repositoryName,
+            filepath,
+            locHash,
+            rev
+        }
+    }
+    return null
 }
 
 export function getContentWithAttachements(response) {
@@ -45,8 +46,7 @@ export function getContentWithAttachements(response) {
                 value: revision,
                 short: true
             }],
-            mrkdwn_in: ['text'],
-            color: repository.color_label
+            mrkdwn_in: ['text']
         }]
     }
 }
@@ -56,9 +56,7 @@ export function getFileContents(url, options, cb) {
     if (!username || !token) {
         throw new Error('Beanstalk username and token are required')
     }
-    const accountName = getAccountName(url)
-    const repositoryName = getRepositoryName(url)
-    const filepath = getFilePath(url)
+    const { accountName, repositoryName, filepath } = parseUrl(url)
     const apiUrl = `https://${ accountName }.beanstalkapp.com/api`
     const authStr = `${ username }:${ token }`
     const encodedAuthStr = new Buffer(authStr).toString('base64')

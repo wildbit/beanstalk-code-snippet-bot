@@ -2,10 +2,8 @@
 
 import expect from 'expect'
 import {
+    parseUrl,
     getContentWithAttachements,
-    getFilePath,
-    getRepositoryName,
-    getAccountName,
     getSanitizedPath,
     getLocCrc
 } from '../src/utils'
@@ -30,24 +28,42 @@ describe('utils', () => {
         })
     })
 
-    describe('getAccountName', () => {
+    describe('parseUrl', () => {
+        const url1 = '<https://wb.beanstalkapp.com/beanstalk/browse/git/app/schemas/v1/multi_release_schema.rb#L3830012464>'
+        const url2 = 'http://test-complex123.beanstalkapp.com/testRepo/browse/git/index.js'
+        const url3 = 'test-complex123.beanstalkapp.com/'
+        const url4 = 'https://derekandrey.beanstalkapp.com/codesnippet-tets/browse/git/index.js?ref=c-397c63ede5221cfeef426a2b861132255e35a7bf#L3830012464'
+
         it('should return account name', () => {
-            expect(getAccountName('<https://wb.beanstalkapp.com/beanstalk/browse/git/app/schemas/v1/multi_release_schema.rb#L3830012464>')).toEqual('wb')
-            expect(getAccountName('http://test-complex123.beanstalkapp.com/')).toEqual('test-complex123')
-            expect(getAccountName('test-complex123.beanstalkapp.com/')).toEqual('test-complex123')
+            expect(parseUrl(url1).accountName).toEqual('wb')
+            expect(parseUrl(url2).accountName).toEqual('test-complex123')
+            expect(parseUrl(url3)).toEqual(null)
+            expect(parseUrl(url4).accountName).toEqual('derekandrey')
         })
-    })
-
-    describe('getRepositoryName', () => {
         it('should return repository name', () => {
-            expect(getRepositoryName('<https://wb.beanstalkapp.com/beanstalk/browse/git/app/schemas/v1/multi_release_schema.rb#L3830012464>')).toEqual('beanstalk')
+            expect(parseUrl(url1).repositoryName).toEqual('beanstalk')
+            expect(parseUrl(url2).repositoryName).toEqual('testRepo')
+            expect(parseUrl(url4).repositoryName).toEqual('codesnippet-tets')
         })
-    })
 
-    describe('getFilePath', () => {
-        it('should return file path', () => {
-            expect(getFilePath('<https://wb.beanstalkapp.com/beanstalk/browse/git/app/schemas/v1/multi_release_schema.rb#L3830012464>')).toEqual('app/schemas/v1/multi_release_schema.rb')
+        it('should return filepath', () => {
+            expect(parseUrl(url1).filepath).toEqual('app/schemas/v1/multi_release_schema.rb')
+            expect(parseUrl(url2).filepath).toEqual('index.js')
+            expect(parseUrl(url4).filepath).toEqual('index.js')
         })
+
+        it('should return line hash', () => {
+            expect(parseUrl(url1).locHash).toEqual('3830012464')
+            expect(parseUrl(url2).locHash).toBe(undefined)
+            expect(parseUrl(url4).locHash).toEqual('3830012464')
+        })
+
+        it('should return revision number', () => {
+            expect(parseUrl(url1).rev).toBe(undefined)
+            expect(parseUrl(url2).rev).toBe(undefined)
+            expect(parseUrl(url4).rev).toEqual('397c63ede5221cfeef426a2b861132255e35a7bf')
+        })
+
     })
 
     describe('getContentWithAttachements', () => {
@@ -106,8 +122,7 @@ line 2
                                 "short": true
                             }
                         ],
-                        "mrkdwn_in": ["text"],
-                        "color": "white"
+                        "mrkdwn_in": ["text"]
                     }
                 /* eslint-enable */
                 ]
