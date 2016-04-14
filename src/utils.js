@@ -1,5 +1,6 @@
 import crc from 'easy-crc32'
 import axios from 'axios'
+import { padStart } from 'lodash'
 
 const NAME = 'Beanstalk Code Snippet Bot'
 
@@ -17,16 +18,22 @@ export function parseUrl(url) {
     const matches = re.exec(url)
     if (matches) {
         const [, accountName, repositoryName, filepath, ...rest] = matches
-        const [, rev, , locHash] = rest
+        const [, revision, , locHash] = rest
         return {
             accountName,
             repositoryName,
             filepath,
             locHash,
-            rev
+            revision
         }
     }
     return null
+}
+
+export function withLineNumbers(content) {
+    const lines = content.split('\n')
+    const padding = (`${ lines.length }`).length
+    return lines.map((line, idx) => `${ padStart(idx + 1, padding, '0') }. ${ line }`).join('\n')
 }
 
 export function getContentWithAttachements(response) {
@@ -36,7 +43,7 @@ export function getContentWithAttachements(response) {
         attachments: [{
             fallback: path,
             title: name,
-            text: `\`\`\`${ contents }\n\`\`\``,
+            text: `\`\`\`${ withLineNumbers(contents) }\n\`\`\``,
             fields: [{
                 title: 'Repository',
                 value: repository.title,

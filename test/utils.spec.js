@@ -5,7 +5,8 @@ import {
     parseUrl,
     getContentWithAttachements,
     getSanitizedPath,
-    getLocCrc
+    getLocCrc,
+    withLineNumbers
 } from '../src/utils'
 
 describe('utils', () => {
@@ -59,11 +60,59 @@ describe('utils', () => {
         })
 
         it('should return revision number', () => {
-            expect(parseUrl(url1).rev).toBe(undefined)
-            expect(parseUrl(url2).rev).toBe(undefined)
-            expect(parseUrl(url4).rev).toEqual('397c63ede5221cfeef426a2b861132255e35a7bf')
+            expect(parseUrl(url1).revision).toBe(undefined)
+            expect(parseUrl(url2).revision).toBe(undefined)
+            expect(parseUrl(url4).revision).toEqual('397c63ede5221cfeef426a2b861132255e35a7bf')
         })
 
+    })
+
+    describe('withLineNumbers', () => {
+        it('should return content with line numbers', () => {
+            /* eslint-disable */
+            const content =
+`line 1
+line 2
+
+line 4
+`
+            const expected =
+`1. line 1
+2. line 2
+3. 
+4. line 4
+5. `
+            expect(withLineNumbers(content)).toEqual(expected)
+        })
+
+        it('should pad line numbers', () => {
+            const content =
+`line 1
+
+
+
+
+
+
+
+
+line10
+`
+            const expected =
+`01. line 1
+02. 
+03. 
+04. 
+05. 
+06. 
+07. 
+08. 
+09. 
+10. line10
+11. `
+            /* eslint-enable */
+            expect(withLineNumbers(content)).toEqual(expected)
+        })
     })
 
     describe('getContentWithAttachements', () => {
@@ -106,9 +155,9 @@ describe('utils', () => {
                     {
                         "fallback": "index.js",
                         "title": "index.js",
-                        "text": `\`\`\`test
-
-line 2
+                        "text": `\`\`\`1. test
+2. 
+3. line 2
 \`\`\``,
                         "fields": [
                             {
