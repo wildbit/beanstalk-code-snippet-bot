@@ -7,11 +7,13 @@ config:
     info: Your Beanstalk Username
     default: beanstalk_username
     type: secret
+    global: true
   - name: BS_AUTH_TOKEN
     friendly_name: Beanstalk Auth Token
     info: Your Beanstalk Authorization Token
     default: beanstalk_auth_token
     type: secret
+    global: true
 #background: resources/background.png
 #config:
 #  - name: OPTION
