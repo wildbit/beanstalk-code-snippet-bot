@@ -56,13 +56,15 @@ export function getFileContents(url, options, cb) {
     if (!username || !token) {
         throw new Error('Beanstalk username and token are required')
     }
-    const { accountName, repositoryName, filepath } = parseUrl(url)
+    const { accountName, repositoryName, filepath, revision } = parseUrl(url)
     const apiUrl = `https://${ accountName }.beanstalkapp.com/api`
     const authStr = `${ username }:${ token }`
     const encodedAuthStr = new Buffer(authStr).toString('base64')
     axios
-        .get(`${ apiUrl }/repositories/${ repositoryName }/node.json?path=${ filepath }`, {
+        .get(`${ apiUrl }/repositories/${ repositoryName }/node.json`, {
             params: {
+                path: filepath,
+                revision,
                 contents: true
             },
             headers: {
