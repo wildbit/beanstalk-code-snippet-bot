@@ -30,7 +30,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
-var NAME = 'Beanstalk Code Snippet Bot';
+// const NAME = 'Beanstalk Code Snippet Bot'
 var LINES_OFFSET = 3;
 
 function getSanitizedPath(path) {
@@ -127,11 +127,10 @@ function getContentWithAttachements(response, url) {
     }
 
     return {
-        username: NAME,
+        username: name,
+        text: '```' + fileContents + '\n```',
         attachments: [{
             fallback: path,
-            title: name,
-            text: '```' + fileContents + '\n```',
             fields: [{
                 title: 'Repository',
                 value: repository.title,
@@ -140,8 +139,7 @@ function getContentWithAttachements(response, url) {
                 title: 'Revision',
                 value: revision,
                 short: true
-            }],
-            mrkdwn_in: ['text']
+            }]
         }]
     };
 }
