@@ -23,7 +23,7 @@
     "pre-commit": "^1.1.2"
   },
   "scripts": {
-    "start": "babel-node index.js",
+    "start": "npm install; babel-node index.js",
     "test": "mocha --compilers js:babel-core/register --require testSetup.js --recursive ./test/*.js",
     "test:watch": "npm test -- --watch",
     "lint": "eslint .",
