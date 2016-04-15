@@ -2,7 +2,7 @@ import crc from 'easy-crc32'
 import axios from 'axios'
 import { padStart } from 'lodash'
 
-const NAME = 'Beanstalk Code Snippet Bot'
+// const NAME = 'Beanstalk Code Snippet Bot'
 const LINES_OFFSET = 3
 
 export function getSanitizedPath(path) {
@@ -76,11 +76,10 @@ export function getContentWithAttachements(response, url) {
 
 
     return {
-        username: NAME,
+        username: name,
+        text: `\`\`\`${ fileContents }\n\`\`\``,
         attachments: [{
             fallback: path,
-            title: name,
-            text: `\`\`\`${ fileContents }\n\`\`\``,
             fields: [{
                 title: 'Repository',
                 value: repository.title,
@@ -89,8 +88,7 @@ export function getContentWithAttachements(response, url) {
                 title: 'Revision',
                 value: revision,
                 short: true
-            }],
-            mrkdwn_in: ['text']
+            }]
         }]
     }
 }

@@ -233,12 +233,8 @@ if (!slackToken) {
             const url = 'https://derekandrey.beanstalkapp.com/codesnippet-tets/browse/git/index.js?ref=c-397c63ede5221cfeef426a2b861132255e35a7bf'
             const expected = {
                 /* eslint-disable */
-                "username": "Beanstalk Code Snippet Bot",
-                "attachments": [
-                    {
-                        "fallback": "index.js",
-                        "title": "index.js",
-                        "text": `\`\`\`01. var Botkit = require('botkit')
+                "username": "index.js",
+                "text": `\`\`\`01. var Botkit = require('botkit')
 02. 
 03. // Expect a SLACK_TOKEN environment variable
 04. var slackToken = process.env.SLACK_TOKEN
@@ -249,6 +245,9 @@ if (!slackToken) {
 09. 
 10. 
 \`\`\``,
+                "attachments": [
+                    {
+                        "fallback": "index.js",
                         "fields": [
                             {
                                 "title": "Repository",
@@ -260,8 +259,7 @@ if (!slackToken) {
                                 "value": "397c63ede5221cfeef426a2b861132255e35a7bf",
                                 "short": true
                             }
-                        ],
-                        "mrkdwn_in": ["text"]
+                        ]
                     }
                     /* eslint-enable */
                 ]
@@ -273,12 +271,8 @@ if (!slackToken) {
             const url = 'https://derekandrey.beanstalkapp.com/codesnippet-tets/browse/git/index.js?ref=c-397c63ede5221cfeef426a2b861132255e35a7bf#L4272935344'
             const expected = {
                 /* eslint-disable */
-                "username": "Beanstalk Code Snippet Bot",
-                "attachments": [
-                    {
-                        "fallback": "index.js",
-                        "title": "index.js",
-                        "text": `\`\`\`...
+                "username": "index.js",
+                "text": `\`\`\`...
 02. 
 03. // Expect a SLACK_TOKEN environment variable
 04. var slackToken = process.env.SLACK_TOKEN
@@ -288,6 +282,9 @@ if (!slackToken) {
 08. }
 ...
 \`\`\``,
+                "attachments": [
+                    {
+                        "fallback": "index.js",
                         "fields": [
                             {
                                 "title": "Repository",
@@ -299,8 +296,7 @@ if (!slackToken) {
                                 "value": "397c63ede5221cfeef426a2b861132255e35a7bf",
                                 "short": true
                             }
-                        ],
-                        "mrkdwn_in": ["text"]
+                        ]
                     }
                     /* eslint-enable */
                 ]
