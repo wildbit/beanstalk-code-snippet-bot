@@ -66,7 +66,7 @@ export function getContentWithAttachements(response, url) {
     let lineNumber
     let fileContents
     const { locHash } = parseUrl(url)
-    const { path, name, contents, revision, repository } = response.data
+    const { path, contents, revision, repository } = response.data
     if (locHash) {
         lineNumber = getLineNumberFromHash(locHash, contents, path)
         fileContents = getLinesAround(contents, lineNumber).join('\n')
@@ -76,7 +76,7 @@ export function getContentWithAttachements(response, url) {
 
 
     return {
-        username: name,
+        username: path,
         text: `\`\`\`${ fileContents }\n\`\`\``,
         attachments: [{
             fallback: path,
