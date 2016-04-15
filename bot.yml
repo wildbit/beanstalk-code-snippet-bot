@@ -6,7 +6,7 @@ config:
     friendly_name: Beanstalk Username
     info: Your Beanstalk Username
     default: beanstalk_username
-    type: secret
+    type: text
     global: true
   - name: BS_AUTH_TOKEN
     friendly_name: Beanstalk Auth Token
