@@ -33,8 +33,7 @@
     "eslint-staged": "eslint-staged"
   },
   "pre-commit": [
-    "eslint-staged",
-    "build"
+    "eslint-staged"
   ],
   "repository": {
     "type": "git",
