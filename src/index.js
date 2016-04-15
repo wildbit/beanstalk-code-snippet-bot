@@ -1,6 +1,6 @@
 /* eslint no-console: 0 */
 
-import { getFileContents } from './src/utils'
+import { getFileContents } from './utils'
 import Botkit from 'botkit'
 
 // Expect a SLACK_TOKEN environment variable
