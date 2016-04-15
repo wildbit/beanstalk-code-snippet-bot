@@ -6,7 +6,10 @@ import {
     getContentWithAttachements,
     getSanitizedPath,
     getLocCrc,
-    withLineNumbers
+    linesHashMap,
+    getLineNumberFromHash,
+    linesAsArrayWithLineNumbers,
+    getLinesAround
 } from '../src/utils'
 
 describe('utils', () => {
@@ -25,7 +28,36 @@ describe('utils', () => {
     describe('getLocCrc', () => {
         it('should return proper hashes', () => {
             expect(getLocCrc('/config.ru', 4)).toEqual(7082412740)
+            expect(getLocCrc('index.js', 1)).toEqual(4259026361)
+            expect(getLocCrc('index.js', 5)).toEqual(4272935344)
+            expect(getLocCrc('index.js', 6)).toEqual(2545360918)
             expect(getLocCrc('app/schemas/v1/multi_release_schema.rb', 11)).toEqual(3830012464)
+        })
+    })
+
+    describe('linesHashMap', () => {
+        it('should return proper hashes', () => {
+            const content =
+`line 1
+line 2
+`
+            expect(linesHashMap(content, 'index.js')).toBeAn('array')
+            expect(linesHashMap(content, 'index.js').length).toEqual(3)
+            expect(linesHashMap(content, 'index.js')).toEqual([4259026361, 2496947215, 3889247389])
+        })
+    })
+
+    describe('getLineNumberFromHash', () => {
+        it('should return proper hashes', () => {
+            const content =
+                `line 1
+line 2
+
+line 4
+`
+            expect(getLineNumberFromHash(4259026361, content, 'index.js')).toEqual(1)
+            expect(getLineNumberFromHash(3889247389, content, 'index.js')).toEqual(3)
+            expect(getLineNumberFromHash(4272935344, content, 'index.js')).toEqual(5)
         })
     })
 
@@ -82,7 +114,7 @@ line 4
 3. 
 4. line 4
 5. `
-            expect(withLineNumbers(content)).toEqual(expected)
+            expect(linesAsArrayWithLineNumbers(content).join('\n')).toEqual(expected)
         })
 
         it('should pad line numbers', () => {
@@ -111,43 +143,94 @@ line10
 10. line10
 11. `
             /* eslint-enable */
-            expect(withLineNumbers(content)).toEqual(expected)
+            expect(linesAsArrayWithLineNumbers(content).join('\n')).toEqual(expected)
+        })
+    })
+    describe('getLinesAround', () => {
+        it('should return lines around the specified line +- offset', () => {
+            const content =
+`line 1
+line 2
+line 3
+line 4
+line 5
+line 6
+line 7
+line 8
+line 9
+line 10
+`
+            const expected1 =
+`01. line 1
+02. line 2
+03. line 3
+...`
+
+            const expected2 =
+`...
+03. line 3
+04. line 4
+05. line 5
+06. line 6
+07. line 7
+...`
+
+            const expected3 =
+`...
+08. line 8
+09. line 9
+10. line 10`
+            /* eslint-enable */
+            expect(getLinesAround(content, 1, 2).join('\n')).toEqual(expected1)
+            expect(getLinesAround(content, 5, 2).join('\n')).toEqual(expected2)
+            expect(getLinesAround(content, 10, 2).join('\n')).toEqual(expected3)
         })
     })
 
     describe('getContentWithAttachements', () => {
-        it('should return an object with attachement', () => {
-            const response = {
-                /* eslint-disable */
-                "data": {
-                    "repository": {
-                        "id": 686137,
-                        "account_id": 184458,
-                        "name": "codesnippet-tets",
-                        "created_at": "2016/04/12 21:16:42 +0000",
-                        "updated_at": "2016/04/12 21:22:09 +0000",
-                        "title": "codesnippet-tests",
-                        "color_label": "white",
-                        "storage_used_bytes": 52224,
-                        "last_commit_at": "2016/04/12 21:22:07 +0000",
-                        "type": "GitRepository",
-                        "default_branch": "master",
-                        "vcs": "git",
-                        "repository_url": "git@derekandrey.git.beanstalkapp.com:/derekandrey/codesnippet-tets.git",
-                        "repository_url_https": "https://derekandrey.git.beanstalkapp.com/codesnippet-tets.git",
-                    },
-                    "name": "index.js",
-                    "path": "index.js",
-                    "revision": "397c63ede5221cfeef426a2b861132255e35a7bf",
-                    "directory": false,
-                    "file": true,
-                    "binary": false,
-                    "mime_type": "application/javascript",
-                    "language": "javascript",
-                    "contents": 'test\n\nline 2'
-                }
-                /* eslint-enable */
+        const contents = `var Botkit = require('botkit')
+
+// Expect a SLACK_TOKEN environment variable
+var slackToken = process.env.SLACK_TOKEN
+if (!slackToken) {
+  console.error('SLACK_TOKEN is required!')
+  process.exit(1)
+}
+
+`
+        const response = {
+            /* eslint-disable */
+            "data": {
+                "repository": {
+                    "id": 686137,
+                    "account_id": 184458,
+                    "name": "codesnippet-tets",
+                    "created_at": "2016/04/12 21:16:42 +0000",
+                    "updated_at": "2016/04/12 21:22:09 +0000",
+                    "title": "codesnippet-tests",
+                    "color_label": "white",
+                    "storage_used_bytes": 52224,
+                    "last_commit_at": "2016/04/12 21:22:07 +0000",
+                    "type": "GitRepository",
+                    "default_branch": "master",
+                    "vcs": "git",
+                    "repository_url": "git@derekandrey.git.beanstalkapp.com:/derekandrey/codesnippet-tets.git",
+                    "repository_url_https": "https://derekandrey.git.beanstalkapp.com/codesnippet-tets.git",
+                },
+                "name": "index.js",
+                "path": "index.js",
+                "revision": "397c63ede5221cfeef426a2b861132255e35a7bf",
+                "directory": false,
+                "file": true,
+                "binary": false,
+                "mime_type": "application/javascript",
+                "language": "javascript",
+                "contents": contents
             }
+            /* eslint-enable */
+        }
+        it('should return an object with attachement', () => {
+            const url = 'https://derekandrey.beanstalkapp.com/codesnippet-tets/browse/git/index.js?ref=c-397c63ede5221cfeef426a2b861132255e35a7bf'
             const expected = {
                 /* eslint-disable */
                 "username": "Beanstalk Code Snippet Bot",
@@ -155,9 +238,16 @@ line10
                     {
                         "fallback": "index.js",
                         "title": "index.js",
-                        "text": `\`\`\`1. test
-2. 
-3. line 2
+                        "text": `\`\`\`01. var Botkit = require('botkit')
+02. 
+03. // Expect a SLACK_TOKEN environment variable
+04. var slackToken = process.env.SLACK_TOKEN
+05. if (!slackToken) {
+06.   console.error('SLACK_TOKEN is required!')
+07.   process.exit(1)
+08. }
+09. 
+10. 
 \`\`\``,
                         "fields": [
                             {
@@ -173,10 +263,49 @@ line10
                         ],
                         "mrkdwn_in": ["text"]
                     }
-                /* eslint-enable */
+                    /* eslint-enable */
                 ]
             }
-            expect(getContentWithAttachements(response)).toEqual(expected)
+            expect(getContentWithAttachements(response, url)).toEqual(expected)
+        })
+
+        it('should support LOC anchors', () => {
+            const url = 'https://derekandrey.beanstalkapp.com/codesnippet-tets/browse/git/index.js?ref=c-397c63ede5221cfeef426a2b861132255e35a7bf#L4272935344'
+            const expected = {
+                /* eslint-disable */
+                "username": "Beanstalk Code Snippet Bot",
+                "attachments": [
+                    {
+                        "fallback": "index.js",
+                        "title": "index.js",
+                        "text": `\`\`\`...
+02. 
+03. // Expect a SLACK_TOKEN environment variable
+04. var slackToken = process.env.SLACK_TOKEN
+05. if (!slackToken) {
+06.   console.error('SLACK_TOKEN is required!')
+07.   process.exit(1)
+08. }
+...
+\`\`\``,
+                        "fields": [
+                            {
+                                "title": "Repository",
+                                "value": "codesnippet-tests",
+                                "short": true
+                            },
+                            {
+                                "title": "Revision",
+                                "value": "397c63ede5221cfeef426a2b861132255e35a7bf",
+                                "short": true
+                            }
+                        ],
+                        "mrkdwn_in": ["text"]
+                    }
+                    /* eslint-enable */
+                ]
+            }
+            expect(getContentWithAttachements(response, url)).toEqual(expected)
         })
     })
 })
