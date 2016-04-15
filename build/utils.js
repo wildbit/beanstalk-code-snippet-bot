@@ -9,7 +9,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 exports.getSanitizedPath = getSanitizedPath;
 exports.getLocCrc = getLocCrc;
 exports.parseUrl = parseUrl;
-exports.withLineNumbers = withLineNumbers;
+exports.linesHashMap = linesHashMap;
+exports.getLineNumberFromHash = getLineNumberFromHash;
+exports.linesAsArrayWithLineNumbers = linesAsArrayWithLineNumbers;
+exports.getLinesAround = getLinesAround;
 exports.getContentWithAttachements = getContentWithAttachements;
 exports.getFileContents = getFileContents;
 
@@ -28,12 +31,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
 var NAME = 'Beanstalk Code Snippet Bot';
+var LINES_OFFSET = 3;
 
 function getSanitizedPath(path) {
     return path.replace(/^\//, '').replace(/\/$/, '');
 }
-function getLocCrc(filepath, line) {
-    return _easyCrc2.default.calculate(getSanitizedPath(filepath)) + _easyCrc2.default.calculate('' + line);
+
+function getLocCrc(filepath, lineNum) {
+    return _easyCrc2.default.calculate(getSanitizedPath(filepath)) + _easyCrc2.default.calculate('' + lineNum);
 }
 
 function parseUrl(url) {
@@ -64,15 +69,49 @@ function parseUrl(url) {
     return null;
 }
 
-function withLineNumbers(content) {
+function linesHashMap(content, filepath) {
+    return content.split('\n').map(function (line, lineNumber) {
+        return getLocCrc(filepath, lineNumber + 1);
+    });
+}
+
+function getLineNumberFromHash(locHash, content, filepath) {
+    return linesHashMap(content, filepath).indexOf(parseInt(locHash, 10)) + 1;
+}
+
+function linesAsArrayWithLineNumbers(content) {
     var lines = content.split('\n');
     var padding = ('' + lines.length).length;
     return lines.map(function (line, idx) {
         return (0, _lodash.padStart)(idx + 1, padding, '0') + '. ' + line;
-    }).join('\n');
+    });
 }
 
-function getContentWithAttachements(response) {
+function getLinesAround(content, line) {
+    var offset = arguments.length <= 2 || arguments[2] === undefined ? LINES_OFFSET : arguments[2];
+
+    // line is 1-based so we will need to convert it to 0-based everywhere
+    var lines = linesAsArrayWithLineNumbers(content);
+    var totalLines = lines.length - 2;
+    var minLine = Math.max(line - 1 - offset, 0);
+    var maxLine = Math.min(line - 1 + offset, totalLines);
+    var newLines = minLine > 0 ? ['...'] : [];
+    for (var currLine = minLine; currLine <= maxLine; currLine++) {
+        newLines.push(lines[currLine]);
+    }
+    if (maxLine < totalLines) {
+        newLines.push('...');
+    }
+    return newLines;
+}
+
+function getContentWithAttachements(response, url) {
+    var lineNumber = void 0;
+    var fileContents = void 0;
+
+    var _parseUrl = parseUrl(url);
+
+    var locHash = _parseUrl.locHash;
     var _response$data = response.data;
     var path = _response$data.path;
     var name = _response$data.name;
@@ -80,12 +119,19 @@ function getContentWithAttachements(response) {
     var revision = _response$data.revision;
     var repository = _response$data.repository;
 
+    if (locHash) {
+        lineNumber = getLineNumberFromHash(locHash, contents, path);
+        fileContents = getLinesAround(contents, lineNumber).join('\n');
+    } else {
+        fileContents = linesAsArrayWithLineNumbers(contents).join('\n');
+    }
+
     return {
         username: NAME,
         attachments: [{
             fallback: path,
             title: name,
-            text: '```' + withLineNumbers(contents) + '\n```',
+            text: '```' + fileContents + '\n```',
             fields: [{
                 title: 'Repository',
                 value: repository.title,
@@ -108,12 +154,12 @@ function getFileContents(url, options, cb) {
         throw new Error('Beanstalk username and token are required');
     }
 
-    var _parseUrl = parseUrl(url);
+    var _parseUrl2 = parseUrl(url);
 
-    var accountName = _parseUrl.accountName;
-    var repositoryName = _parseUrl.repositoryName;
-    var filepath = _parseUrl.filepath;
-    var revision = _parseUrl.revision;
+    var accountName = _parseUrl2.accountName;
+    var repositoryName = _parseUrl2.repositoryName;
+    var filepath = _parseUrl2.filepath;
+    var revision = _parseUrl2.revision;
 
     var apiUrl = 'https://' + accountName + '.beanstalkapp.com/api';
     var authStr = username + ':' + token;
@@ -128,7 +174,7 @@ function getFileContents(url, options, cb) {
             Authorization: 'Basic ' + encodedAuthStr
         }
     }).then(function (res) {
-        return cb(null, getContentWithAttachements(res));
+        return cb(null, getContentWithAttachements(res, url));
     }).catch(function (err) {
         return cb(err, null);
     });
