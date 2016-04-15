@@ -63,11 +63,10 @@ export function getLinesAround(content, line, offset = LINES_OFFSET) {
 }
 
 export function getContentWithAttachements(response, url) {
-    const { locHash } = parseUrl(url)
-    const { path, name, contents, revision, repository } = response.data
-
     let lineNumber
     let fileContents
+    const { locHash } = parseUrl(url)
+    const { path, name, contents, revision, repository } = response.data
     if (locHash) {
         lineNumber = getLineNumberFromHash(locHash, contents, path)
         fileContents = getLinesAround(contents, lineNumber).join('\n')
