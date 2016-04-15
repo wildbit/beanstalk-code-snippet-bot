@@ -2,7 +2,7 @@
   "name": "beanstalk-code-snippet-bot",
   "version": "1.0.0",
   "private": true,
-  "description": "A Slack Bot that displays a code snippets for a file's URL from Beanstalk",
+  "description": "A Slack Bot that displays the contents of a file from your Beanstalk repository.",
   "main": "index.js",
   "dependencies": {
     "axios": "^0.9.1",
