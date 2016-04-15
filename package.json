@@ -2,7 +2,7 @@
   "name": "beanstalk-code-snippet-bot",
   "version": "1.0.0",
   "private": true,
-  "description": "A Slack Bot that displays a code snippet for a specific file URL from Beanstalk",
+  "description": "A Slack Bot that displays a code snippets for a file's URL from Beanstalk",
   "main": "index.js",
   "dependencies": {
     "axios": "^0.9.1",
@@ -23,7 +23,7 @@
     "pre-commit": "^1.1.2"
   },
   "scripts": {
-    "start": "npm install; babel-node index.js",
+    "start": "babel-node index.js",
     "test": "mocha --compilers js:babel-core/register --require testSetup.js --recursive ./test/*.js",
     "test:watch": "npm test -- --watch",
     "lint": "eslint .",
@@ -40,7 +40,7 @@
   "keywords": [],
   "authors": [
     "Andrey Okonetchnikov <andrey@okonet.ru>",
-    "Derek Rushforth"
+    "Derek Rushforth <d@derekrushforth.com>"
   ],
   "license": "MIT",
   "bugs": {
