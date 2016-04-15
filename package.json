@@ -26,15 +26,15 @@
   "scripts": {
     "build": "babel src --out-dir build",
     "start": "node build/index.js",
-    "prestart": "npm run build",
     "test": "mocha --compilers js:babel-core/register --require testSetup.js --recursive ./test/*.js",
     "test:watch": "npm test -- --watch",
-    "lint": "eslint .",
+    "lint": "eslint src",
     "lint:fix": "npm run lint --fix",
     "eslint-staged": "eslint-staged"
   },
   "pre-commit": [
-    "eslint-staged"
+    "eslint-staged",
+    "build"
   ],
   "repository": {
     "type": "git",
