@@ -14,41 +14,21 @@ var _beepboopBotkit2 = _interopRequireDefault(_beepboopBotkit);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Expect a SLACK_TOKEN environment variable
-var slackToken = process.env.SLACK_TOKEN;
+// TODO: this needs to work in multi-team mode
+// Set up ENV variables
 var bsUsername = process.env.BS_USERNAME;
 var bsAuthToken = process.env.BS_AUTH_TOKEN;
 
-if (!slackToken) {
-    console.error('SLACK_TOKEN is required!');
-    process.exit(1);
-}
-
 var controller = _botkit2.default.slackbot();
+var beepboop = _beepboopBotkit2.default.start(controller);
 
-if (process.env.NODE_ENV === 'dev') {
-    var bot = controller.spawn({
-        token: slackToken
+// Spawn worker processes when teams are added
+beepboop.on('add_resource', function (message) {
+    Object.keys(beepboop.workers).forEach(function (id) {
+        // Create instance of botkit worker
+        var bot = beepboop.workers[id];
     });
-
-    bot.startRTM(function (err) {
-        if (err) {
-            throw new Error('Could not connect to Slack');
-        }
-    });
-} else {
-    (function () {
-        var beepboop = _beepboopBotkit2.default.start(controller);
-
-        // Spawn worker processes when teams are added
-        beepboop.on('add_resource', function (message) {
-            Object.keys(beepboop.workers).forEach(function (id) {
-                // Create instance of botkit worker
-                var bot = beepboop.workers[id];
-            });
-        });
-    })();
-}
+});
 
 // TODO: setup process with API token to account. We're going to do this later...
 

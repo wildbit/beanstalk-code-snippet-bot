@@ -3,40 +3,21 @@ import { HELP_MESSAGE } from './constants'
 import Botkit from 'botkit'
 import BeepBoop from 'beepboop-botkit'
 
-// Expect a SLACK_TOKEN environment variable
-const slackToken = process.env.SLACK_TOKEN
+// TODO: this needs to work in multi-team mode
+// Set up ENV variables
 const bsUsername = process.env.BS_USERNAME
 const bsAuthToken = process.env.BS_AUTH_TOKEN
 
-if (!slackToken) {
-    console.error('SLACK_TOKEN is required!')
-    process.exit(1)
-}
-
 const controller = Botkit.slackbot()
+const beepboop = BeepBoop.start(controller)
 
-if (process.env.NODE_ENV === 'dev') {
-    const bot = controller.spawn({
-        token: slackToken
+// Spawn worker processes when teams are added
+beepboop.on('add_resource', (message) => {
+    Object.keys(beepboop.workers).forEach((id) => {
+      // Create instance of botkit worker
+      var bot = beepboop.workers[id]
     })
-
-    bot.startRTM(err => {
-      if (err) {
-        throw new Error('Could not connect to Slack')
-      }
-    })
-
-} else {
-    const beepboop = BeepBoop.start(controller)
-
-    // Spawn worker processes when teams are added
-    beepboop.on('add_resource', (message) => {
-        Object.keys(beepboop.workers).forEach((id) => {
-          // Create instance of botkit worker
-          var bot = beepboop.workers[id]
-        })
-    })
-}
+})
 
 // TODO: setup process with API token to account. We're going to do this later...
 
