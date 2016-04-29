@@ -5,7 +5,7 @@ import bodyParser from 'body-parser'
 import { getFileContents } from './utils'
 import { HELP_MESSAGE, EMPTY_REQUEST, ERROR_MESSAGE } from './constants'
 
-const { BS_USERNAME, BS_AUTHTOKEN, SLACK_VERIFY_TOKEN, PORT } = process.env
+const { BS_USERNAME, BS_AUTH_TOKEN, SLACK_VERIFY_TOKEN, PORT } = process.env
 if (!SLACK_VERIFY_TOKEN) {
     console.error('SLACK_VERIFY_TOKEN is required')
     process.exit(1)
@@ -48,7 +48,7 @@ app.route('/code')
 
         getFileContents(text, {
             username: BS_USERNAME,
-            token: BS_AUTHTOKEN
+            token: BS_AUTH_TOKEN
         }, (err, content) => {
             if (err) {
                 return res.json({
