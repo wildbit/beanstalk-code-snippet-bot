@@ -1,5 +1,3 @@
-/* eslint no-console: 0 */
-
 import { getFileContents } from './utils'
 import Botkit from 'botkit'
 
