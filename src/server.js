@@ -1,17 +1,20 @@
+/* eslint consistent-return: 0 */
 import express from 'express'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
+import { getFileContents } from './utils'
+import { HELP_MESSAGE, EMPTY_REQUEST, ERROR_MESSAGE } from './constants'
 
-const VERIFY_TOKEN = process.env.SLACK_VERIFY_TOKEN
-if (!VERIFY_TOKEN) {
+const { BS_USERNAME, BS_AUTHTOKEN, SLACK_VERIFY_TOKEN, PORT } = process.env
+if (!SLACK_VERIFY_TOKEN) {
     console.error('SLACK_VERIFY_TOKEN is required')
     process.exit(1)
 }
-const PORT = process.env.PORT
 if (!PORT) {
     console.error('PORT is required')
     process.exit(1)
 }
+
 
 const app = express()
 app.use(morgan('dev'))
@@ -21,20 +24,43 @@ app.route('/code')
         res.sendStatus(200)
     })
     .post(bodyParser.urlencoded({ extended: true }), (req, res) => {
-        if (req.body.token !== VERIFY_TOKEN) {
+        if (req.body.token !== SLACK_VERIFY_TOKEN) {
             return res.sendStatus(401)
         }
 
-        let message = 'boopbeep'
+        const { text } = req.body
 
-        // Handle any help requests
-        if (req.body.text === 'help') {
-            message = "Sorry, I can't offer much help, just here to beep and boop"
+        // Handle empty request
+        if (!text) {
+            return res.json({
+                response_type: 'ephemeral',
+                text: EMPTY_REQUEST
+            })
         }
 
-        return res.json({
-            response_type: 'ephemeral',
-            text: message
+        // Handle any help requests
+        if (text === 'help') {
+            return res.json({
+                response_type: 'ephemeral',
+                text: HELP_MESSAGE
+            })
+        }
+
+        getFileContents(text, {
+            username: BS_USERNAME,
+            token: BS_AUTHTOKEN
+        }, (err, content) => {
+            if (err) {
+                return res.json({
+                    response_type: 'ephemeral',
+                    text: `${ ERROR_MESSAGE } ${ err.message }`
+                })
+            }
+
+            return res.json({
+                response_type: 'ephemeral',
+                ...content
+            })
         })
     })
 
