@@ -7,9 +7,12 @@
   "dependencies": {
     "axios": "^0.9.1",
     "babel-register": "^6.7.2",
+    "body-parser": "^1.15.0",
     "botkit": "0.0.15",
     "easy-crc32": "0.0.2",
-    "lodash": "^4.11.1"
+    "express": "^4.13.4",
+    "lodash": "^4.11.1",
+    "morgan": "^1.7.0"
   },
   "devDependencies": {
     "babel-cli": "^6.7.5",
