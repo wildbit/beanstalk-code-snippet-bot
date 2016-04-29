@@ -25,11 +25,13 @@
     "expect": "^1.16.0",
     "lint-staged": "^0.2.1",
     "mocha": "^2.4.5",
+    "ngrok": "^2.1.8",
     "pre-commit": "^1.1.2"
   },
   "scripts": {
     "start": "node index.js",
     "test": "mocha --compilers js:babel-core/register --require testSetup.js --recursive ./test/*.js",
+    "proxy": "ngrok http -subdomain bscodebot 3000",
     "test:watch": "npm test -- --watch",
     "lint": "eslint src",
     "lint:fix": "npm run lint -- --fix",
