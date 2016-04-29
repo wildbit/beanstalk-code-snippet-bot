@@ -29,7 +29,9 @@
     "pre-commit": "^1.1.2"
   },
   "scripts": {
-    "start": "node index.js",
+    "build": "babel src --out-dir build",
+    "start": "node ./build/index.js",
+    "start:dev": "node index.js",
     "test": "mocha --compilers js:babel-core/register --require testSetup.js --recursive ./test/*.js",
     "proxy": "ngrok http -subdomain bscodebot 3000",
     "test:watch": "npm test -- --watch",
