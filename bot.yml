@@ -10,10 +10,8 @@ config:
     info: Your Beanstalk Username
     default: beanstalk_username
     type: text
-    global: true
   - name: BS_AUTH_TOKEN
     friendly_name: Beanstalk Auth Token
     info: Your Beanstalk Authorization Token
     default: beanstalk_auth_token
     type: secret
-    global: true
