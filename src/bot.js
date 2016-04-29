@@ -1,4 +1,5 @@
 import { getFileContents } from './utils'
+import { HELP_MESSAGE } from './constants'
 import Botkit from 'botkit'
 
 // Expect a SLACK_TOKEN environment variable
@@ -44,12 +45,5 @@ controller.hears(
     ['help'],
     ['direct_message', 'direct_mention', 'mention'],
     (botInstance, message) => {
-        const help = 'I paste snippet code from Beanstalk links. \n\n' +
-            '_How to get started_\n' +
-            '1. Browse to a specific file in one of your Beanstalk repositories \n' +
-            '2. In Beanstalk, click on the line of code you want to share \n' +
-            '3. Copy the URL from your browser and paste it into slack \n' +
-            ':champagne: :champagne:'
-
-        botInstance.reply(message, help)
+        botInstance.reply(message, HELP_MESSAGE)
     })
