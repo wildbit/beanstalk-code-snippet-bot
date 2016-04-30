@@ -24,10 +24,16 @@ beepboop.on('add_resource', (message) => {
 })
 
 beepboop.on('update_resource', (message) => {
+    console.log('**************************')
+    console.log('Resource being updated')
+    console.log(message)
     // TODO: handle this - Update team's auth details
 })
 
 beepboop.on('remove_resource', (message) => {
+    console.log('**************************')
+    console.log('Resource being removed')
+    console.log(message)
     // TODO: handle this - Remove team's auth details
 })
 
