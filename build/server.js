@@ -36,6 +36,9 @@ if (!PORT) {
     console.error('PORT is required');
     process.exit(1);
 }
+console.log(process.env);
+
+// TODO: Since we have a 3000ms window to initially response we should send an immediate response based off validation, then follow up message with actual file info using the response_url.
 
 var app = (0, _express2.default)();
 app.use((0, _morgan2.default)('dev'));
@@ -49,8 +52,9 @@ app.route('/code').get(function (req, res) {
 
     var text = req.body.text;
 
-    // Handle empty request
+    console.log(req.body);
 
+    // Handle empty request
     if (!text) {
         return res.json({
             response_type: 'ephemeral',
