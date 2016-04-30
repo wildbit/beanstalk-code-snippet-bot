@@ -11,12 +11,10 @@ const beanstalkAuthMap = {}
 // Spawn worker processes when teams are added
 beepboop.on('add_resource', (message) => {
 
-    const authDetails = {
-      bsUsername: message.resource.BS_USERNAME,
-      bsAuthToken: message.resource.BS_AUTH_TOKEN
+    beanstalkAuthMap[message.resourceID] = {
+        bsUsername: message.resource.BS_USERNAME,
+        bsAuthToken: message.resource.BS_AUTH_TOKEN
     }
-
-    beanstalkAuthMap[message.resourceID] = authDetails
 
     // TODO: Better handling if we don't recognize message
     // TODO: Better error handling if BS credentials are incorrect
@@ -37,7 +35,7 @@ controller.hears(
     (botInstance, message) => {
 
         // TODO: validate whether authDetails exists for this team
-        const authDetails = beanstalkAuthMap[botInstance.config.resourceID]
+        let authDetails = beanstalkAuthMap[botInstance.config.resourceID]
 
         getFileContents(message.text, {
             username: authDetails.bsUsername,

@@ -22,12 +22,10 @@ var beanstalkAuthMap = {};
 // Spawn worker processes when teams are added
 beepboop.on('add_resource', function (message) {
 
-    var authDetails = {
+    beanstalkAuthMap[message.resourceID] = {
         bsUsername: message.resource.BS_USERNAME,
         bsAuthToken: message.resource.BS_AUTH_TOKEN
     };
-
-    beanstalkAuthMap[message.resourceID] = authDetails;
 
     // TODO: Better handling if we don't recognize message
     // TODO: Better error handling if BS credentials are incorrect
