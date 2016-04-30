@@ -17,41 +17,47 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var controller = _botkit2.default.slackbot();
 var beepboop = _beepboopBotkit2.default.start(controller);
 
+var beanstalkAuthMap = {};
+
 // Spawn worker processes when teams are added
 beepboop.on('add_resource', function (message) {
-    Object.keys(beepboop.workers).forEach(function (id) {
 
-        //TODO: refactor this. there's a better way to do it.
+    var authDetails = {
+        bsUsername: message.resource.BS_USERNAME,
+        bsAuthToken: message.resource.BS_AUTH_TOKEN
+    };
 
-        // Create instance of botkit worker
-        var bot = beepboop.workers[id];
-
-        controller.hears(['.beanstalkapp.com/'], ['ambient', 'direct_mention', 'direct_message', 'mention'], function (botInstance, message) {
-            (0, _utils.getFileContents)(message.text, {
-                username: bot.resource.BS_USERNAME,
-                token: bot.resource.BS_AUTH_TOKEN
-            }, function (err, res) {
-                if (err) {
-                    throw new Error('Error getting file contents: ' + err.message);
-                }
-
-                botInstance.reply(message, res);
-            });
-        });
-
-        controller.hears(['help'], ['direct_message', 'direct_mention', 'mention'], function (botInstance, message) {
-            botInstance.reply(message, _constants.HELP_MESSAGE);
-        });
-    });
+    beanstalkAuthMap[message.resourceID] = authDetails;
 
     // TODO: Better handling if we don't recognize message
     // TODO: Better error handling if BS credentials are incorrect
 });
 
 beepboop.on('update_resource', function (message) {
-    // TODO: handle this
+    // TODO: handle this - Update team's auth details
 });
 
 beepboop.on('remove_resource', function (message) {
-    // TODO: handle this
+    // TODO: handle this - Remove team's auth details
+});
+
+controller.hears(['.beanstalkapp.com/'], ['ambient', 'direct_mention', 'direct_message', 'mention'], function (botInstance, message) {
+
+    // TODO: validate whether authDetails exists for this team
+    var authDetails = beanstalkAuthMap[botInstance.config.resourceID];
+
+    (0, _utils.getFileContents)(message.text, {
+        username: authDetails.bsUsername,
+        token: authDetails.bsAuthToken
+    }, function (err, res) {
+        if (err) {
+            throw new Error('Error getting file contents: ' + err.message);
+        }
+
+        botInstance.reply(message, res);
+    });
+});
+
+controller.hears(['help'], ['direct_message', 'direct_mention', 'mention'], function (botInstance, message) {
+    botInstance.reply(message, _constants.HELP_MESSAGE);
 });
