@@ -4,10 +4,11 @@ avatar: resources/avatar.png
 slackscopes:
   - bot
   - commands
+  - incoming-webhook
 config:
   - name: BS_USERNAME
     friendly_name: Beanstalk Username
-    info: Your Beanstalk Username
+    info: Your Beanstalk Username. This is case sensitive.
     default: beanstalk_username
     type: text
   - name: BS_AUTH_TOKEN

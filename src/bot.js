@@ -10,9 +10,11 @@ const beanstalkAuthMap = {}
 
 beepboop.on('add_resource', (message) => {
     // When a team connects, persist their data so we can look it up later
+    // This also runs for each connected team every time the bot is started
     beanstalkAuthMap[message.resourceID] = {
         bsUsername: message.resource.BS_USERNAME,
-        bsAuthToken: message.resource.BS_AUTH_TOKEN
+        bsAuthToken: message.resource.BS_AUTH_TOKEN,
+        slackTeamID: message.resource.SlackTeamID
     }
 })
 

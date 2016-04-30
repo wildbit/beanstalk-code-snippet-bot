@@ -15,7 +15,9 @@ if (!PORT) {
     console.error('PORT is required')
     process.exit(1)
 }
+console.log(process.env)
 
+// TODO: Since we have a 3000ms window to initially response we should send an immediate response based off validation, then follow up message with actual file info using the response_url.
 
 const app = express()
 app.use(morgan('dev'))
@@ -30,6 +32,7 @@ app.route('/code')
         }
 
         const { text } = req.body
+        console.log(req.body)
 
         // Handle empty request
         if (!text) {
