@@ -38,8 +38,6 @@ if (!PORT) {
     process.exit(1);
 }
 
-// TODO: Since we have a 3000ms window to initially respond, we should send an immediate response based off validation. Then follow up message with actual file info using the response_url.
-
 var app = (0, _express2.default)();
 app.use((0, _morgan2.default)('dev'));
 
@@ -90,6 +88,7 @@ app.route('/code').get(function (req, res) {
                     });
                 }
 
+                // TODO: If this request takes more than 3000ms slack will not post our response. Instead we should probably return an initial message to the user("Looking up your file"). Then after send the file as an incoming webhook using response_url.
                 return res.json(_extends({
                     response_type: 'ephemeral'
                 }, content));

@@ -21,36 +21,38 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var controller = _botkit2.default.slackbot();
 var beepboop = _beepboopBotkit2.default.start(controller);
 
-var beanstalkAuthMap = {};
-
 beepboop.on('add_resource', function (message) {
-    // When a team connects, persist their data so we can look it up later
-    // This also runs for each connected team every time the bot is started
-    _nodePersist2.default.setItem(message.resourceID, {
-        bsUsername: message.resource.BS_USERNAME,
-        bsAuthToken: message.resource.BS_AUTH_TOKEN,
-        slackTeamID: message.resource.SlackTeamID
-    });
+    // When a team connects we persist their data so we can look it up later.
+    // This also runs for each connected team every time the bot is started.
+    setStorage(message);
 });
 
 beepboop.on('update_resource', function (message) {
-    // When a team updates their auth info, update their persisted data
+    // When a team updates their auth info we update their persisted data.
+    setStorage(message);
+});
+
+function setStorage(message) {
     _nodePersist2.default.setItem(message.resourceID, {
         bsUsername: message.resource.BS_USERNAME,
         bsAuthToken: message.resource.BS_AUTH_TOKEN,
         slackTeamID: message.resource.SlackTeamID
     });
-});
+}
 
 beepboop.on('remove_resource', function (message) {
-    // When a team removes this bot, remove their data
+    // When a team removes this bot we remove their data.
     _nodePersist2.default.removeItem(message.resourceID);
 });
 
 controller.hears(['.beanstalkapp.com/'], ['ambient', 'direct_mention', 'direct_message', 'mention'], function (botInstance, message) {
 
-    // TODO: validate whether authDetails exists for this team
     var team = _nodePersist2.default.getItem(botInstance.config.resourceID);
+
+    // Validate Beanstalk Auth Info
+    if (team.bsUsername === '' || team.bsAuthToken === '') {
+        botInstance.reply(message, 'We could not find your Team\'s Beanstalk Authorization info. Please go fill it out.');
+    }
 
     (0, _utils.getFileContents)(message.text, {
         username: team.bsUsername,

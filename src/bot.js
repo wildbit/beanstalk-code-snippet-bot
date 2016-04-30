@@ -4,33 +4,30 @@ import Botkit from 'botkit'
 import BeepBoop from 'beepboop-botkit'
 import storage from 'node-persist'
 
-
 const controller = Botkit.slackbot()
 const beepboop = BeepBoop.start(controller)
 
-const beanstalkAuthMap = {}
-
 beepboop.on('add_resource', (message) => {
-    // When a team connects, persist their data so we can look it up later
-    // This also runs for each connected team every time the bot is started
-    storage.setItem(message.resourceID, {
-        bsUsername: message.resource.BS_USERNAME,
-        bsAuthToken: message.resource.BS_AUTH_TOKEN,
-        slackTeamID: message.resource.SlackTeamID
-    })
+    // When a team connects we persist their data so we can look it up later.
+    // This also runs for each connected team every time the bot is started.
+    setStorage(message)
 })
 
 beepboop.on('update_resource', (message) => {
-    // When a team updates their auth info, update their persisted data
-    storage.setItem(message.resourceID, {
-        bsUsername: message.resource.BS_USERNAME,
-        bsAuthToken: message.resource.BS_AUTH_TOKEN,
-        slackTeamID: message.resource.SlackTeamID
-    })
+    // When a team updates their auth info we update their persisted data.
+    setStorage(message)
 })
 
+function setStorage(message) {
+  storage.setItem(message.resourceID, {
+    bsUsername: message.resource.BS_USERNAME,
+    bsAuthToken: message.resource.BS_AUTH_TOKEN,
+    slackTeamID: message.resource.SlackTeamID
+  })
+}
+
 beepboop.on('remove_resource', (message) => {
-    // When a team removes this bot, remove their data
+    // When a team removes this bot we remove their data.
     storage.removeItem(message.resourceID)
 })
 
@@ -40,8 +37,12 @@ controller.hears(
     ['ambient', 'direct_mention', 'direct_message', 'mention'],
     (botInstance, message) => {
 
-        // TODO: validate whether authDetails exists for this team
         let team = storage.getItem(botInstance.config.resourceID);
+
+        // Validate Beanstalk Auth Info
+        if (team.bsUsername === '' || team.bsAuthToken === '') {
+            botInstance.reply(message, `We could not find your Team's Beanstalk Authorization info. Please go fill it out.`)
+        }
 
         getFileContents(message.text, {
             username: team.bsUsername,
