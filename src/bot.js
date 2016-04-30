@@ -2,6 +2,8 @@ import { getFileContents } from './utils'
 import { HELP_MESSAGE } from './constants'
 import Botkit from 'botkit'
 import BeepBoop from 'beepboop-botkit'
+import storage from 'node-persist'
+
 
 const controller = Botkit.slackbot()
 const beepboop = BeepBoop.start(controller)
@@ -11,22 +13,25 @@ const beanstalkAuthMap = {}
 beepboop.on('add_resource', (message) => {
     // When a team connects, persist their data so we can look it up later
     // This also runs for each connected team every time the bot is started
-    beanstalkAuthMap[message.resourceID] = {
+    storage.setItem(message.resourceID, {
         bsUsername: message.resource.BS_USERNAME,
         bsAuthToken: message.resource.BS_AUTH_TOKEN,
         slackTeamID: message.resource.SlackTeamID
-    }
+    })
 })
 
 beepboop.on('update_resource', (message) => {
     // When a team updates their auth info, update their persisted data
-    beanstalkAuthMap[message.resourceID].bsUsername = message.resource.BS_USERNAME;
-    beanstalkAuthMap[message.resourceID].bsAuthToken = message.resource.BS_AUTH_TOKEN;
+    storage.setItem(message.resourceID, {
+        bsUsername: message.resource.BS_USERNAME,
+        bsAuthToken: message.resource.BS_AUTH_TOKEN,
+        slackTeamID: message.resource.SlackTeamID
+    })
 })
 
 beepboop.on('remove_resource', (message) => {
     // When a team removes this bot, remove their data
-    delete beanstalkAuthMap[message.resourceID]
+    storage.removeItem(message.resourceID)
 })
 
 
@@ -36,15 +41,15 @@ controller.hears(
     (botInstance, message) => {
 
         // TODO: validate whether authDetails exists for this team
-        let authDetails = beanstalkAuthMap[botInstance.config.resourceID]
+        let team = storage.getItem(botInstance.config.resourceID);
 
         getFileContents(message.text, {
-            username: authDetails.bsUsername,
-            token: authDetails.bsAuthToken
+            username: team.bsUsername,
+            token: team.bsAuthToken
         }, (err, res) => {
             if (err) {
-              botInstance.reply(message, `We had an issue getting the snippet from Beanstalk. Please make sure that you entered the correct username and authorization token.` )
-              throw new Error(`Error getting file contents: ${ err.message }`)
+                botInstance.reply(message, `We had an issue getting the snippet from Beanstalk. Please make sure that you entered the correct username and authorization token.` )
+                throw new Error(`Error getting file contents: ${ err.message }`)
             }
 
             botInstance.reply(message, res)

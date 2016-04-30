@@ -2,11 +2,11 @@
 import express from 'express'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
+import storage from 'node-persist'
 import { getFileContents } from './utils'
 import { HELP_MESSAGE, EMPTY_REQUEST, ERROR_MESSAGE } from './constants'
 
-// TODO: still need to pull tokens from teams
-const { BS_USERNAME, BS_AUTH_TOKEN, SLACK_VERIFY_TOKEN, PORT } = process.env
+const { SLACK_VERIFY_TOKEN, PORT } = process.env
 if (!SLACK_VERIFY_TOKEN) {
     console.error('SLACK_VERIFY_TOKEN is required')
     process.exit(1)
@@ -15,9 +15,8 @@ if (!PORT) {
     console.error('PORT is required')
     process.exit(1)
 }
-console.log(process.env)
 
-// TODO: Since we have a 3000ms window to initially response we should send an immediate response based off validation, then follow up message with actual file info using the response_url.
+// TODO: Since we have a 3000ms window to initially respond, we should send an immediate response based off validation. Then follow up message with actual file info using the response_url.
 
 const app = express()
 app.use(morgan('dev'))
@@ -31,8 +30,7 @@ app.route('/code')
             return res.sendStatus(401)
         }
 
-        const { text } = req.body
-        console.log(req.body)
+        const { text, response_url, team_id } = req.body
 
         // Handle empty request
         if (!text) {
@@ -50,21 +48,30 @@ app.route('/code')
             })
         }
 
-        getFileContents(text, {
-            username: BS_USERNAME,
-            token: BS_AUTH_TOKEN
-        }, (err, content) => {
-            if (err) {
-                return res.json({
-                    response_type: 'ephemeral',
-                    text: `${ ERROR_MESSAGE } ${ err.message }`
+        // Iterate through storage data
+        storage.forEach((key, value) => {
+
+            // Match team ID in storage from request
+            if (value.slackTeamID === team_id) {
+
+                // Get file contents from Beanstalk
+                getFileContents(text, {
+                    username: value.bsUsername,
+                    token: value.bsAuthToken
+                }, (err, content) => {
+                    if (err) {
+                        return res.json({
+                            response_type: 'ephemeral',
+                            text: `${ ERROR_MESSAGE } ${ err.message }`
+                        })
+                    }
+
+                    return res.json({
+                        response_type: 'ephemeral',
+                        ...content
+                    })
                 })
             }
-
-            return res.json({
-                response_type: 'ephemeral',
-                ...content
-            })
         })
     })
 

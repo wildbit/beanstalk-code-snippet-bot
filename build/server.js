@@ -15,16 +15,17 @@ var _bodyParser = require('body-parser');
 
 var _bodyParser2 = _interopRequireDefault(_bodyParser);
 
+var _nodePersist = require('node-persist');
+
+var _nodePersist2 = _interopRequireDefault(_nodePersist);
+
 var _utils = require('./utils');
 
 var _constants = require('./constants');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// TODO: still need to pull tokens from teams
 var _process$env = process.env;
-var BS_USERNAME = _process$env.BS_USERNAME;
-var BS_AUTH_TOKEN = _process$env.BS_AUTH_TOKEN;
 var SLACK_VERIFY_TOKEN = _process$env.SLACK_VERIFY_TOKEN;
 var PORT = _process$env.PORT;
 
@@ -36,9 +37,8 @@ if (!PORT) {
     console.error('PORT is required');
     process.exit(1);
 }
-console.log(process.env);
 
-// TODO: Since we have a 3000ms window to initially response we should send an immediate response based off validation, then follow up message with actual file info using the response_url.
+// TODO: Since we have a 3000ms window to initially respond, we should send an immediate response based off validation. Then follow up message with actual file info using the response_url.
 
 var app = (0, _express2.default)();
 app.use((0, _morgan2.default)('dev'));
@@ -50,11 +50,13 @@ app.route('/code').get(function (req, res) {
         return res.sendStatus(401);
     }
 
-    var text = req.body.text;
-
-    console.log(req.body);
+    var _req$body = req.body;
+    var text = _req$body.text;
+    var response_url = _req$body.response_url;
+    var team_id = _req$body.team_id;
 
     // Handle empty request
+
     if (!text) {
         return res.json({
             response_type: 'ephemeral',
@@ -70,20 +72,29 @@ app.route('/code').get(function (req, res) {
         });
     }
 
-    (0, _utils.getFileContents)(text, {
-        username: BS_USERNAME,
-        token: BS_AUTH_TOKEN
-    }, function (err, content) {
-        if (err) {
-            return res.json({
-                response_type: 'ephemeral',
-                text: _constants.ERROR_MESSAGE + ' ' + err.message
+    // Iterate through storage data
+    _nodePersist2.default.forEach(function (key, value) {
+
+        // Match team ID in storage from request
+        if (value.slackTeamID === team_id) {
+
+            // Get file contents from Beanstalk
+            (0, _utils.getFileContents)(text, {
+                username: value.bsUsername,
+                token: value.bsAuthToken
+            }, function (err, content) {
+                if (err) {
+                    return res.json({
+                        response_type: 'ephemeral',
+                        text: _constants.ERROR_MESSAGE + ' ' + err.message
+                    });
+                }
+
+                return res.json(_extends({
+                    response_type: 'ephemeral'
+                }, content));
             });
         }
-
-        return res.json(_extends({
-            response_type: 'ephemeral'
-        }, content));
     });
 });
 
