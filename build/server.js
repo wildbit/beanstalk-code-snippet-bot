@@ -21,6 +21,7 @@ var _constants = require('./constants');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// TODO: still need to pull tokens from teams
 var _process$env = process.env;
 var BS_USERNAME = _process$env.BS_USERNAME;
 var BS_AUTH_TOKEN = _process$env.BS_AUTH_TOKEN;

@@ -5,6 +5,7 @@ import bodyParser from 'body-parser'
 import { getFileContents } from './utils'
 import { HELP_MESSAGE, EMPTY_REQUEST, ERROR_MESSAGE } from './constants'
 
+// TODO: still need to pull tokens from teams
 const { BS_USERNAME, BS_AUTH_TOKEN, SLACK_VERIFY_TOKEN, PORT } = process.env
 if (!SLACK_VERIFY_TOKEN) {
     console.error('SLACK_VERIFY_TOKEN is required')
