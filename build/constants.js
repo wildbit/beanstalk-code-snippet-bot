@@ -7,4 +7,10 @@ var HELP_MESSAGE = exports.HELP_MESSAGE = 'I paste snippet code from Beanstalk l
 
 var EMPTY_REQUEST = exports.EMPTY_REQUEST = "I'll need a valid URL to the file on Beanstalk";
 
-var ERROR_MESSAGE = exports.ERROR_MESSAGE = 'Error getting file contents: ';
+var ERROR_MESSAGE = exports.ERROR_MESSAGE = 'We had an issue getting the snippet from Beanstalk. Please make sure that you entered the correct username and authorization token.';
+
+var MISSING_AUTH = exports.MISSING_AUTH = 'We could not find your Team\'s Beanstalk Authorization info. Please go fill it out.';
+
+var UNRECOGNIZED_REQUEST = exports.UNRECOGNIZED_REQUEST = 'I didn\'t understand that. Try asking for `help` or paste a Beanstalk file URL.';
+
+var BS_URL_MATCH = exports.BS_URL_MATCH = '.beanstalkapp.com/';

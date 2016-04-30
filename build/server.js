@@ -70,31 +70,38 @@ app.route('/code').get(function (req, res) {
         });
     }
 
-    // Iterate through storage data
-    _nodePersist2.default.forEach(function (key, value) {
+    if (text.indexOf(_constants.BS_URL_MATCH) > -1) {
+        // Iterate through storage data
+        _nodePersist2.default.forEach(function (key, value) {
 
-        // Match team ID in storage from request
-        if (value.slackTeamID === team_id) {
+            // Match team ID in storage from request
+            if (value.slackTeamID === team_id) {
 
-            // Get file contents from Beanstalk
-            (0, _utils.getFileContents)(text, {
-                username: value.bsUsername,
-                token: value.bsAuthToken
-            }, function (err, content) {
-                if (err) {
-                    return res.json({
-                        response_type: 'ephemeral',
-                        text: _constants.ERROR_MESSAGE + ' ' + err.message
-                    });
-                }
+                // Get file contents from Beanstalk
+                (0, _utils.getFileContents)(text, {
+                    username: value.bsUsername,
+                    token: value.bsAuthToken
+                }, function (err, content) {
+                    if (err) {
+                        return res.json({
+                            response_type: 'ephemeral',
+                            text: _constants.ERROR_MESSAGE
+                        });
+                    }
 
-                // TODO: If this request takes more than 3000ms slack will not post our response. Instead we should probably return an initial message to the user("Looking up your file"). Then after send the file as an incoming webhook using response_url.
-                return res.json(_extends({
-                    response_type: 'ephemeral'
-                }, content));
-            });
-        }
-    });
+                    // TODO: If this request takes more than 3000ms slack will not post our response. Instead we should probably return an initial message to the user("Looking up your file"). Then after send the file as an incoming webhook using response_url.
+                    return res.json(_extends({
+                        response_type: 'in_channel'
+                    }, content));
+                });
+            }
+        });
+    } else {
+        return res.json({
+            response_type: 'ephemeral',
+            text: _constants.UNRECOGNIZED_REQUEST
+        });
+    }
 });
 
 app.listen(PORT, function (err) {

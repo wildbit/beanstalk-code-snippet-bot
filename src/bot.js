@@ -1,5 +1,5 @@
 import { getFileContents } from './utils'
-import { HELP_MESSAGE } from './constants'
+import { HELP_MESSAGE, ERROR_MESSAGE, MISSING_AUTH, BS_URL_MATCH, UNRECOGNIZED_REQUEST } from './constants'
 import Botkit from 'botkit'
 import BeepBoop from 'beepboop-botkit'
 import storage from 'node-persist'
@@ -33,7 +33,7 @@ beepboop.on('remove_resource', (message) => {
 
 
 controller.hears(
-    ['.beanstalkapp.com/'],
+    [BS_URL_MATCH],
     ['ambient', 'direct_mention', 'direct_message', 'mention'],
     (botInstance, message) => {
 
@@ -41,7 +41,7 @@ controller.hears(
 
         // Validate Beanstalk Auth Info
         if (team.bsUsername === '' || team.bsAuthToken === '') {
-            botInstance.reply(message, `We could not find your Team's Beanstalk Authorization info. Please go fill it out.`)
+            botInstance.reply(message, MISSING_AUTH)
         }
 
         getFileContents(message.text, {
@@ -49,7 +49,7 @@ controller.hears(
             token: team.bsAuthToken
         }, (err, res) => {
             if (err) {
-                botInstance.reply(message, `We had an issue getting the snippet from Beanstalk. Please make sure that you entered the correct username and authorization token.` )
+                botInstance.reply(message, ERROR_MESSAGE )
                 throw new Error(`Error getting file contents: ${ err.message }`)
             }
 
@@ -64,4 +64,9 @@ controller.hears(
         botInstance.reply(message, HELP_MESSAGE)
     })
 
-// TODO: Better handling if we don't recognize message
+controller.hears(
+    ['.*'],
+    ['direct_message', 'direct_mention', 'mention'],
+    (botInstance, message) => {
+      botInstance.reply(message, UNRECOGNIZED_REQUEST)
+    })

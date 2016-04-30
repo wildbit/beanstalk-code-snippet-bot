@@ -7,4 +7,10 @@ export const HELP_MESSAGE = 'I paste snippet code from Beanstalk links. \n\n' +
 
 export const EMPTY_REQUEST = "I'll need a valid URL to the file on Beanstalk"
 
-export const ERROR_MESSAGE = 'Error getting file contents: '
+export const ERROR_MESSAGE = 'We had an issue getting the snippet from Beanstalk. Please make sure that you entered the correct username and authorization token.'
+
+export const MISSING_AUTH = 'We could not find your Team\'s Beanstalk Authorization info. Please go fill it out.'
+
+export const UNRECOGNIZED_REQUEST = 'I didn\'t understand that. Try asking for `help` or paste a Beanstalk file URL.'
+
+export const BS_URL_MATCH = '.beanstalkapp.com/'

@@ -45,13 +45,13 @@ beepboop.on('remove_resource', function (message) {
     _nodePersist2.default.removeItem(message.resourceID);
 });
 
-controller.hears(['.beanstalkapp.com/'], ['ambient', 'direct_mention', 'direct_message', 'mention'], function (botInstance, message) {
+controller.hears([_constants.BS_URL_MATCH], ['ambient', 'direct_mention', 'direct_message', 'mention'], function (botInstance, message) {
 
     var team = _nodePersist2.default.getItem(botInstance.config.resourceID);
 
     // Validate Beanstalk Auth Info
     if (team.bsUsername === '' || team.bsAuthToken === '') {
-        botInstance.reply(message, 'We could not find your Team\'s Beanstalk Authorization info. Please go fill it out.');
+        botInstance.reply(message, _constants.MISSING_AUTH);
     }
 
     (0, _utils.getFileContents)(message.text, {
@@ -59,7 +59,7 @@ controller.hears(['.beanstalkapp.com/'], ['ambient', 'direct_mention', 'direct_m
         token: team.bsAuthToken
     }, function (err, res) {
         if (err) {
-            botInstance.reply(message, 'We had an issue getting the snippet from Beanstalk. Please make sure that you entered the correct username and authorization token.');
+            botInstance.reply(message, _constants.ERROR_MESSAGE);
             throw new Error('Error getting file contents: ' + err.message);
         }
 
@@ -71,4 +71,6 @@ controller.hears(['help'], ['direct_message', 'direct_mention', 'mention'], func
     botInstance.reply(message, _constants.HELP_MESSAGE);
 });
 
-// TODO: Better handling if we don't recognize message
+controller.hears(['.*'], ['direct_message', 'direct_mention', 'mention'], function (botInstance, message) {
+    botInstance.reply(message, _constants.UNRECOGNIZED_REQUEST);
+});
