@@ -11,9 +11,6 @@ const beanstalkAuthMap = {}
 // Spawn worker processes when teams are added
 beepboop.on('add_resource', (message) => {
 
-    // TODO: This seems to have a problem if more than one team is sharing BS auth info
-    console.log(message.resourceID);
-    console.log(typeof message.resourceID)
     beanstalkAuthMap[message.resourceID] = {
         bsUsername: message.resource.BS_USERNAME,
         bsAuthToken: message.resource.BS_AUTH_TOKEN
@@ -24,19 +21,12 @@ beepboop.on('add_resource', (message) => {
 })
 
 beepboop.on('update_resource', (message) => {
-    console.log('**************************')
-    console.log('Resource being updated')
-    console.log(message)
     beanstalkAuthMap[message.resourceID].bsUsername = message.resource.BS_USERNAME;
     beanstalkAuthMap[message.resourceID].bsAuthToken = message.resource.BS_AUTH_TOKEN;
-    // TODO: handle this - Update team's auth details
 })
 
 beepboop.on('remove_resource', (message) => {
-    console.log('**************************')
-    console.log('Resource being removed')
-    console.log(message)
-    // TODO: handle this - Remove team's auth details
+    delete beanstalkAuthMap[message.resourceID]
 })
 
 
@@ -48,17 +38,15 @@ controller.hears(
         // TODO: validate whether authDetails exists for this team
         let authDetails = beanstalkAuthMap[botInstance.config.resourceID]
 
-      console.log('**************************')
-      console.log(authDetails)
         getFileContents(message.text, {
             username: authDetails.bsUsername,
             token: authDetails.bsAuthToken
         }, (err, res) => {
             if (err) {
+              botInstance.reply(message, `We had an issue getting the snippet from Beanstalk. Please make sure that you entered the correct username and authorization token.` )
               throw new Error(`Error getting file contents: ${ err.message }`)
             }
 
-          // TODO: it's responding as bot.yml
             botInstance.reply(message, res)
         })
     })
@@ -67,10 +55,6 @@ controller.hears(
     ['help'],
     ['direct_message', 'direct_mention', 'mention'],
     (botInstance, message) => {
-      console.log(beanstalkAuthMap)
-      console.log('**************************')
-      console.log(botInstance.config.resourceID)
-      console.log(beanstalkAuthMap[botInstance.config.resourceID])
         botInstance.reply(message, HELP_MESSAGE)
     })
 
