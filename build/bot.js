@@ -24,7 +24,7 @@ var beanstalkAuthMap = {};
 // Spawn worker processes when teams are added
 beepboop.on('add_resource', function (message) {
 
-    // TODO ---------------- HAVING PROBLEMS PICKING OFF RESOURCE IDs
+    // TODO: This seems to have a problem if more than one team is sharing BS auth info
     console.log(message.resourceID);
     console.log(_typeof(message.resourceID));
     beanstalkAuthMap[message.resourceID] = {
@@ -40,6 +40,8 @@ beepboop.on('update_resource', function (message) {
     console.log('**************************');
     console.log('Resource being updated');
     console.log(message);
+    beanstalkAuthMap[message.resourceID].bsUsername = message.resource.BS_USERNAME;
+    beanstalkAuthMap[message.resourceID].bsAuthToken = message.resource.BS_AUTH_TOKEN;
     // TODO: handle this - Update team's auth details
 });
 
@@ -55,6 +57,8 @@ controller.hears(['.beanstalkapp.com/'], ['ambient', 'direct_mention', 'direct_m
     // TODO: validate whether authDetails exists for this team
     var authDetails = beanstalkAuthMap[botInstance.config.resourceID];
 
+    console.log('**************************');
+    console.log(authDetails);
     (0, _utils.getFileContents)(message.text, {
         username: authDetails.bsUsername,
         token: authDetails.bsAuthToken
