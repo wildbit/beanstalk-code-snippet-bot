@@ -8,24 +8,22 @@ const beepboop = BeepBoop.start(controller)
 
 const beanstalkAuthMap = {}
 
-// Spawn worker processes when teams are added
 beepboop.on('add_resource', (message) => {
-
+    // When a team connects, persist their data so we can look it up later
     beanstalkAuthMap[message.resourceID] = {
         bsUsername: message.resource.BS_USERNAME,
         bsAuthToken: message.resource.BS_AUTH_TOKEN
     }
-
-    // TODO: Better handling if we don't recognize message
-    // TODO: Better error handling if BS credentials are incorrect
 })
 
 beepboop.on('update_resource', (message) => {
+    // When a team updates their auth info, update their persisted data
     beanstalkAuthMap[message.resourceID].bsUsername = message.resource.BS_USERNAME;
     beanstalkAuthMap[message.resourceID].bsAuthToken = message.resource.BS_AUTH_TOKEN;
 })
 
 beepboop.on('remove_resource', (message) => {
+    // When a team removes this bot, remove their data
     delete beanstalkAuthMap[message.resourceID]
 })
 
@@ -58,3 +56,4 @@ controller.hears(
         botInstance.reply(message, HELP_MESSAGE)
     })
 
+// TODO: Better handling if we don't recognize message
