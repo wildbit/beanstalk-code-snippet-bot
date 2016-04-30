@@ -11,6 +11,9 @@ const beanstalkAuthMap = {}
 // Spawn worker processes when teams are added
 beepboop.on('add_resource', (message) => {
 
+    // TODO ---------------- HAVING PROBLEMS PICKING OFF RESOURCE IDs
+    console.log(message.resourceID);
+    console.log(typeof message.resourceID)
     beanstalkAuthMap[message.resourceID] = {
         bsUsername: message.resource.BS_USERNAME,
         bsAuthToken: message.resource.BS_AUTH_TOKEN
@@ -45,6 +48,7 @@ controller.hears(
               throw new Error(`Error getting file contents: ${ err.message }`)
             }
 
+          // TODO: it's responding as bot.yml
             botInstance.reply(message, res)
         })
     })
@@ -53,6 +57,10 @@ controller.hears(
     ['help'],
     ['direct_message', 'direct_mention', 'mention'],
     (botInstance, message) => {
+      console.log(beanstalkAuthMap)
+      console.log('**************************')
+      console.log(botInstance.config.resourceID)
+      console.log(beanstalkAuthMap[botInstance.config.resourceID])
         botInstance.reply(message, HELP_MESSAGE)
     })
 
