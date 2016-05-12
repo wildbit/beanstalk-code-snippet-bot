@@ -1,3 +1,5 @@
+/* eslint max-len: 0 */
+
 const HELP_MESSAGE = 'I paste snippet code from Beanstalk links. \n\n' +
     '_How to get started_\n' +
     '1. Browse to a specific file in one of your Beanstalk repositories \n' +
