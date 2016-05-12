@@ -31,11 +31,8 @@
     "pre-commit": "^1.1.2"
   },
   "scripts": {
-    "build": "babel src --out-dir build",
-    "prestart": "npm run build",
-    "start": "node ./build/index.js",
-    "start:dev": "node index.js",
-    "test": "mocha --compilers js:babel-core/register --require testSetup.js --recursive ./test/*.js",
+    "start": "node index.js",
+    "test": "mocha --recursive ./test/*.js",
     "proxy": "ngrok http -subdomain bscodebot 3000",
     "test:watch": "npm test -- --watch",
     "lint": "eslint src",
