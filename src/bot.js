@@ -1,8 +1,8 @@
-import { getFileContents } from './utils'
-import { HELP_MESSAGE, ERROR_MESSAGE, MISSING_AUTH, BS_URL_MATCH, UNRECOGNIZED_REQUEST } from './constants'
-import Botkit from 'botkit'
-import BeepBoop from 'beepboop-botkit'
-import storage from 'node-persist'
+const getFileContents = require('./utils').getFileContents
+const { HELP_MESSAGE, ERROR_MESSAGE, MISSING_AUTH, BS_URL_MATCH, UNRECOGNIZED_REQUEST } = require('./constants')
+const Botkit = require('botkit')
+const BeepBoop = require('beepboop-botkit')
+const storage = require('node-persist')
 
 const controller = Botkit.slackbot()
 const beepboop = BeepBoop.start(controller)

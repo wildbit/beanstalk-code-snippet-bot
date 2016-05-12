@@ -1,21 +1,21 @@
-import crc from 'easy-crc32'
-import axios from 'axios'
-import { padStart } from 'lodash'
+const crc = require('easy-crc32')
+const axios = require('axios')
+const padStart = require('lodash/padStart')
 
 // const NAME = 'Beanstalk Code Snippet Bot'
 const LINES_OFFSET = 3
 
-export function getSanitizedPath(path) {
+function getSanitizedPath(path) {
     return path
         .replace(/^\//, '')
         .replace(/\/$/, '')
 }
 
-export function getLocCrc(filepath, lineNum) {
+function getLocCrc(filepath, lineNum) {
     return crc.calculate(getSanitizedPath(filepath)) + crc.calculate(`${ lineNum }`)
 }
 
-export function parseUrl(url) {
+function parseUrl(url) {
     const re = new RegExp(/([\w-_]+)\.beanstalkapp\.com\/([\w-_]+)\/browse\/git\/([\w-_/.]+)(\?ref=c-(\w+))?(#L(\d+))?/g) // eslint-disable-line
     const matches = re.exec(url)
     if (matches) {
@@ -32,21 +32,21 @@ export function parseUrl(url) {
     return null
 }
 
-export function linesHashMap(content, filepath) {
+function linesHashMap(content, filepath) {
     return content.split('\n').map((line, lineNumber) => getLocCrc(filepath, lineNumber + 1))
 }
 
-export function getLineNumberFromHash(locHash, content, filepath) {
+function getLineNumberFromHash(locHash, content, filepath) {
     return linesHashMap(content, filepath).indexOf(parseInt(locHash, 10)) + 1
 }
 
-export function linesAsArrayWithLineNumbers(content) {
+function linesAsArrayWithLineNumbers(content) {
     const lines = content.split('\n')
     const padding = (`${ lines.length }`).length
     return lines.map((line, idx) => `${ padStart(idx + 1, padding, '0') }. ${ line }`)
 }
 
-export function getLinesAround(content, line, offset = LINES_OFFSET) {
+function getLinesAround(content, line, offset = LINES_OFFSET) {
     // line is 1-based so we will need to convert it to 0-based everywhere
     const lines = linesAsArrayWithLineNumbers(content)
     const totalLines = lines.length - 2
@@ -62,7 +62,7 @@ export function getLinesAround(content, line, offset = LINES_OFFSET) {
     return newLines
 }
 
-export function getContentWithAttachements(response, url) {
+function getContentWithAttachements(response, url) {
     let lineNumber
     let fileContents
     const { locHash } = parseUrl(url)
@@ -93,7 +93,7 @@ export function getContentWithAttachements(response, url) {
     }
 }
 
-export function getFileContents(url, options, cb) {
+function getFileContents(url, options, cb) {
     const { username, token } = options
     if (!username || !token) {
         throw new Error('Beanstalk username and token are required')
@@ -115,4 +115,15 @@ export function getFileContents(url, options, cb) {
         })
         .then(res => cb(null, getContentWithAttachements(res, url)))
         .catch(err => cb(err, null))
+}
+
+module.exports = {
+    parseUrl,
+    getContentWithAttachements,
+    getSanitizedPath,
+    getLocCrc,
+    linesHashMap,
+    getLineNumberFromHash,
+    linesAsArrayWithLineNumbers,
+    getLinesAround
 }

@@ -1,7 +1,7 @@
 /* eslint no-unused-expressions: 0 */
 
-import expect from 'expect'
-import {
+const expect = require('expect')
+const {
     parseUrl,
     getContentWithAttachements,
     getSanitizedPath,
@@ -10,7 +10,7 @@ import {
     getLineNumberFromHash,
     linesAsArrayWithLineNumbers,
     getLinesAround
-} from '../src/utils'
+} = require('../src/utils')
 
 describe('utils', () => {
     describe('getSanitizedPath', () => {
