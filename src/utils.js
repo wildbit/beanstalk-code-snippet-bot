@@ -125,5 +125,6 @@ module.exports = {
     linesHashMap,
     getLineNumberFromHash,
     linesAsArrayWithLineNumbers,
-    getLinesAround
+    getLinesAround,
+    getFileContents
 }

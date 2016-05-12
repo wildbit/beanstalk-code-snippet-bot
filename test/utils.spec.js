@@ -9,10 +9,17 @@ const {
     linesHashMap,
     getLineNumberFromHash,
     linesAsArrayWithLineNumbers,
-    getLinesAround
+    getLinesAround,
+    getFileContents
 } = require('../src/utils')
 
 describe('utils', () => {
+    describe('getFileContents', () => {
+        it('should be defined', () => {
+            expect(getFileContents).toExist()
+        })
+    })
+
     describe('getSanitizedPath', () => {
         it('should remove leading and trailing slashed from the path', () => {
             expect(getSanitizedPath('test')).toEqual('test')
