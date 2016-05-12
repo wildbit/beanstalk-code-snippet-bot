@@ -4,7 +4,13 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const storage = require('node-persist')
 const { getFileContents } = require('./utils')
-const { HELP_MESSAGE, EMPTY_REQUEST, ERROR_MESSAGE, BS_URL_MATCH, UNRECOGNIZED_REQUEST } = require('./constants')
+const {
+    HELP_MESSAGE,
+    EMPTY_REQUEST,
+    ERROR_MESSAGE,
+    BS_URL_MATCH,
+    UNRECOGNIZED_REQUEST
+} = require('./constants')
 
 const { SLACK_VERIFY_TOKEN, PORT } = process.env
 if (!SLACK_VERIFY_TOKEN) {
@@ -28,7 +34,7 @@ app.route('/code')
             return res.sendStatus(401)
         }
 
-        const { text, response_url, team_id } = req.body
+        const { text, team_id } = req.body
 
         // Handle empty request
         if (!text) {
@@ -51,7 +57,7 @@ app.route('/code')
             storage.forEach((key, value) => {
 
                 // Match team ID in storage from request
-                if (value.slackTeamID === team_id) {
+                if (value.slackTeamID === team_id) { // eslint-disable-line
 
                     // Get file contents from Beanstalk
                     getFileContents(text, {
@@ -65,7 +71,12 @@ app.route('/code')
                             })
                         }
 
-                        // TODO: If this request takes more than 3000ms slack will not post our response. Instead we should probably return an initial message to the user("Looking up your file"). Then after send the file as an incoming webhook using response_url.
+                        /*
+                        * TODO: If this request takes more than 3000ms slack will not post our
+                        * response. Instead we should probably return an initial message to the
+                        * user("Looking up your file"). Then after send the file as an incoming
+                        * webhook using response_url.
+                        * */
                         return res.json(
                             Object.assign({
                                 response_type: 'in_channel'
