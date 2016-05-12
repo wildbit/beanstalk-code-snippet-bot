@@ -1,4 +1,4 @@
-module.exports = function (wallaby) {
+module.exports = function () {
     return {
         files: [
             'testSetup.js',
@@ -8,18 +8,9 @@ module.exports = function (wallaby) {
         tests: ['test/*.js'],
 
         env: {
-            type: 'node',
-            runner: 'node'
+            type: 'node'
         },
 
-        compilers: {
-            '**/*.js': wallaby.compilers.babel()
-        },
-
-        testFramework: 'mocha',
-
-        bootstrap: function bootstrap() {
-            require('./testSetup')
-        }
+        testFramework: 'mocha'
     }
 }

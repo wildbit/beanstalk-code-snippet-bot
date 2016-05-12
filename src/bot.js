@@ -1,8 +1,14 @@
-import { getFileContents } from './utils'
-import { HELP_MESSAGE, ERROR_MESSAGE, MISSING_AUTH, BS_URL_MATCH, UNRECOGNIZED_REQUEST } from './constants'
-import Botkit from 'botkit'
-import BeepBoop from 'beepboop-botkit'
-import storage from 'node-persist'
+const getFileContents = require('./utils').getFileContents
+const Botkit = require('botkit')
+const BeepBoop = require('beepboop-botkit')
+const storage = require('node-persist')
+const {
+    HELP_MESSAGE,
+    ERROR_MESSAGE,
+    MISSING_AUTH,
+    BS_URL_MATCH,
+    UNRECOGNIZED_REQUEST
+} = require('./constants')
 
 const controller = Botkit.slackbot()
 const beepboop = BeepBoop.start(controller)
@@ -19,11 +25,11 @@ beepboop.on('update_resource', (message) => {
 })
 
 function setStorage(message) {
-  storage.setItem(message.resourceID, {
-    bsUsername: message.resource.BS_USERNAME,
-    bsAuthToken: message.resource.BS_AUTH_TOKEN,
-    slackTeamID: message.resource.SlackTeamID
-  })
+    storage.setItem(message.resourceID, {
+        bsUsername: message.resource.BS_USERNAME,
+        bsAuthToken: message.resource.BS_AUTH_TOKEN,
+        slackTeamID: message.resource.SlackTeamID
+    })
 }
 
 beepboop.on('remove_resource', (message) => {
@@ -37,7 +43,7 @@ controller.hears(
     ['ambient', 'direct_mention', 'direct_message', 'mention'],
     (botInstance, message) => {
 
-        let team = storage.getItem(botInstance.config.resourceID);
+        const team = storage.getItem(botInstance.config.resourceID)
 
         // Validate Beanstalk Auth Info
         if (team.bsUsername === '' || team.bsAuthToken === '') {
@@ -49,7 +55,7 @@ controller.hears(
             token: team.bsAuthToken
         }, (err, res) => {
             if (err) {
-                botInstance.reply(message, ERROR_MESSAGE )
+                botInstance.reply(message, ERROR_MESSAGE)
                 throw new Error(`Error getting file contents: ${ err.message }`)
             }
 
@@ -68,5 +74,5 @@ controller.hears(
     ['.*'],
     ['direct_message', 'direct_mention', 'mention'],
     (botInstance, message) => {
-      botInstance.reply(message, UNRECOGNIZED_REQUEST)
+        botInstance.reply(message, UNRECOGNIZED_REQUEST)
     })

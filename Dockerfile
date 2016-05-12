@@ -1,2 +1,1 @@
-FROM node:4-onbuild
-RUN npm install
+FROM node:6-onbuild
