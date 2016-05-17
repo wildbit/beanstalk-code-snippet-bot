@@ -36,8 +36,6 @@ app.route('/code')
 
         const { text, team_id } = req.body
 
-        console.log(req.body)
-
         // Handle empty request
         if (!text) {
             return res.json({
