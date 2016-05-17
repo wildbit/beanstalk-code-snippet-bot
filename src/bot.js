@@ -13,6 +13,14 @@ const {
 const controller = Botkit.slackbot()
 const beepboop = BeepBoop.start(controller)
 
+function setStorage(message) {
+    storage.setItem(message.resourceID, {
+        bsUsername: message.resource.BS_USERNAME,
+        bsAuthToken: message.resource.BS_AUTH_TOKEN,
+        slackTeamID: message.resource.SlackTeamID
+    })
+}
+
 beepboop.on('add_resource', (message) => {
     // When a team connects we persist their data so we can look it up later.
     // This also runs for each connected team every time the bot is started.
@@ -23,14 +31,6 @@ beepboop.on('update_resource', (message) => {
     // When a team updates their auth info we update their persisted data.
     setStorage(message)
 })
-
-function setStorage(message) {
-    storage.setItem(message.resourceID, {
-        bsUsername: message.resource.BS_USERNAME,
-        bsAuthToken: message.resource.BS_AUTH_TOKEN,
-        slackTeamID: message.resource.SlackTeamID
-    })
-}
 
 beepboop.on('remove_resource', (message) => {
     // When a team removes this bot we remove their data.
