@@ -50,17 +50,21 @@ controller.hears(
             botInstance.reply(message, MISSING_AUTH)
         }
 
-        getFileContents(message.text, {
-            username: team.bsUsername,
-            token: team.bsAuthToken
-        }, (err, res) => {
-            if (err) {
-                botInstance.reply(message, ERROR_MESSAGE)
-                throw new Error(`Error getting file contents: ${ err.message }`)
-            }
+        // Make sure the message isn't from the slash command
+        if (message.text.substr(0, 5) !== '/code') {
+            getFileContents(message.text, {
+                username: team.bsUsername,
+                token: team.bsAuthToken
+            }, (err, res) => {
+                if (err) {
+                    botInstance.reply(message, ERROR_MESSAGE)
+                    throw new Error(`Error getting file contents: ${ err.message }`)
+                }
 
-            botInstance.reply(message, res)
-        })
+                botInstance.reply(message, res)
+            })
+        }
+
     })
 
 controller.hears(
