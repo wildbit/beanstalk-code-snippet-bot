@@ -5,7 +5,7 @@ A Slack Bot that displays the contents of a file from your Beanstalk repository.
 
 ## Usage
 - In Slack, use the `/code` command to add a file from Beanstalk as a code snippet. `/code [Beanstalk file URL]`
-- This bot will listen for Beanstalk file URLs in any channel that it's a member of. Send an invite using `/invite @bs-snippet-bot`
+- This bot will listen for Beanstalk file URLs in any channel that it's a member of. Send an invite using `/invite @beanstalk-snippet-bot`
 
 ## Build and manage it yourself
 Build and manage your own instance of this bot by following these instructions.
