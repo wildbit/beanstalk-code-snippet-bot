@@ -1,9 +1,6 @@
-# beanstalk-code-snippet-bot [![Build Status](https://travis-ci.org/wildbit/beanstalk-code-snippet-bot.svg?branch=master)](https://travis-ci.org/wildbit/beanstalk-code-snippet-bot)
-A Slack Bot that displays the contents of a file from your Beanstalk repository. 
+# beanstalk-code-snippet-bot [![Build Status](https://travis-ci.org/wildbit/beanstalk-code-snippet-bot.svg?branch=master)](https://travis-ci.org/wildbit/beanstalk-code-snippet-bot) <a href='https://beepboophq.com/api/slack/auth/add-to-slack/013fdba9e41a4803aa76f1761afd4eae'><img alt='Add to Slack' height='40' width='139' src='https://platform.slack-edge.com/img/add_to_slack.png' srcset='https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x' /></a>
 
-<a href='https://beepboophq.com/api/slack/auth/add-to-slack/013fdba9e41a4803aa76f1761afd4eae'><img alt='Add to Slack' height='40' width='139' src='https://platform.slack-edge.com/img/add_to_slack.png' srcset='https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x' /></a>
-
-So, instead of this: 
+A Slack Bot that displays the contents of a file from your Beanstalk repository. So, instead of this: 
 
 ![Before](https://dl.dropboxusercontent.com/s/pkylbo81nn1294n/2016-05-18%20at%2012.10.png)
 
