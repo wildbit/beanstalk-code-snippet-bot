@@ -74,12 +74,19 @@ line 4
         const url3 = 'test-complex123.beanstalkapp.com/'
         const url4 = 'https://derekandrey.beanstalkapp.com/codesnippet-tets/browse/git/index.js?ref=c-397c63ede5221cfeef426a2b861132255e35a7bf#L3830012464'
 
+        it('should return an empty object for no mathces', () => {
+            expect(parseUrl(undefined)).toEqual({})
+            expect(parseUrl(null)).toEqual({})
+            expect(parseUrl('some random string')).toEqual({})
+        })
+
         it('should return account name', () => {
             expect(parseUrl(url1).accountName).toEqual('wb')
             expect(parseUrl(url2).accountName).toEqual('test-complex123')
-            expect(parseUrl(url3)).toEqual(null)
+            expect(parseUrl(url3)).toEqual({})
             expect(parseUrl(url4).accountName).toEqual('derekandrey')
         })
+
         it('should return repository name', () => {
             expect(parseUrl(url1).repositoryName).toEqual('beanstalk')
             expect(parseUrl(url2).repositoryName).toEqual('testRepo')

@@ -29,7 +29,7 @@ function parseUrl(url) {
             revision
         }
     }
-    return null
+    return {}
 }
 
 function linesHashMap(content, filepath) {
