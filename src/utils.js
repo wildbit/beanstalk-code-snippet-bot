@@ -16,15 +16,15 @@ function getLocCrc(filepath, lineNum) {
 }
 
 function parseUrl(url) {
-    const re = new RegExp(/([\w-_]+)\.beanstalkapp\.com\/([\w-_]+)\/browse\/git\/([\w-_/.]+)(\?ref=c-(\w+))?(#L(\d+))?/g) // eslint-disable-line
+    const re = new RegExp(/([\w-_]+)\.beanstalkapp\.com\/([\w-_]+)\/browse\/([^/]+)\/([\w-_/.]+)(\?ref=c-(\w+))?(#L(\d+))?/g) // eslint-disable-line
     const matches = re.exec(url)
     if (matches) {
-        const [, accountName, repositoryName, filepath, ...rest] = matches
+        const [, accountName, repositoryName, gitOrSubversionBaseDir, filepath, ...rest] = matches
         const [, revision, , locHash] = rest
         return {
             accountName,
             repositoryName,
-            filepath,
+            filepath: ((gitOrSubversionBaseDir === 'git') ? filepath : gitOrSubversionBaseDir + '/' + filepath), // eslint-disable-line
             locHash,
             revision
         }

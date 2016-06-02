@@ -73,6 +73,7 @@ line 4
         const url2 = 'http://test-complex123.beanstalkapp.com/testRepo/browse/git/index.js'
         const url3 = 'test-complex123.beanstalkapp.com/'
         const url4 = 'https://derekandrey.beanstalkapp.com/codesnippet-tets/browse/git/index.js?ref=c-397c63ede5221cfeef426a2b861132255e35a7bf#L3830012464'
+        const url5 = 'https://myaccount.beanstalkapp.com/myrepo/browse/trunk/path/file.ext?ref=c-12345#L54321'
 
         it('should return an empty object for no mathces', () => {
             expect(parseUrl(undefined)).toEqual({})
@@ -97,18 +98,21 @@ line 4
             expect(parseUrl(url1).filepath).toEqual('app/schemas/v1/multi_release_schema.rb')
             expect(parseUrl(url2).filepath).toEqual('index.js')
             expect(parseUrl(url4).filepath).toEqual('index.js')
+            expect(parseUrl(url5).filepath).toEqual('trunk/path/file.ext')
         })
 
         it('should return line hash', () => {
             expect(parseUrl(url1).locHash).toEqual('3830012464')
             expect(parseUrl(url2).locHash).toBe(undefined)
             expect(parseUrl(url4).locHash).toEqual('3830012464')
+            expect(parseUrl(url5).locHash).toEqual('54321')
         })
 
         it('should return revision number', () => {
             expect(parseUrl(url1).revision).toBe(undefined)
             expect(parseUrl(url2).revision).toBe(undefined)
             expect(parseUrl(url4).revision).toEqual('397c63ede5221cfeef426a2b861132255e35a7bf')
+            expect(parseUrl(url5).revision).toEqual('12345')
         })
 
     })
